@@ -7,8 +7,14 @@ int main() {
     printf("cm8 engine\n");
 
     U64 bitboard = 0ULL;
-    SET_BIT(bitboard, h4);
 
-    printBitboard(maskPawnAttacks(h4, black));
+    initPawnAttacks();
+    for(int i = 0; i < 64; i++) {
+        printf("white pawn attack %d: ", i);
+        printBitboard(pawnAttacks[white][i]);
+        printf("black pawn attack %d: ", i);
+        printBitboard(pawnAttacks[black][i]);
+    }
+
     return 0;
 }

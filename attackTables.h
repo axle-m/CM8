@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include "bit.h"
 
+U64 pawnAttacks[2][64];
+
 const U64 NOT_A;
 /* not A
     0 1 1 1 1 1 1 1
@@ -48,9 +50,10 @@ const U64 NOT_G;
     1 1 1 1 1 1 0 1
 */
 
-// const U64 NOT_AB = NOT_A & NOT_B;
-// const U64 NOT_HG = NOT_H & NOT_G;
-// const U64 NOT_AH = NOT_A & NOT_H;
-// const U64 NOT_BH = NOT_B & NOT_H;
+const U64 NOT_AB;
+const U64 NOT_HG;
+const U64 NOT_AH;
+const U64 NOT_BH;
 
-U64 maskPawnAttacks(int pos, int side);
+U64 maskPawnAttacks(int side, int pos);
+void initPawnAttacks();
