@@ -3,7 +3,7 @@
 
 #include "bit.h"
 
-//set/get/swap macros
+
 void printBitboard(U64 bitboard) {
     for(int i = 0; i < 64; i++) {
 
