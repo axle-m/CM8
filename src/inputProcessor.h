@@ -1,0 +1,1 @@
+int squareToPos(char square[]);

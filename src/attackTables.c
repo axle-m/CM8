@@ -12,6 +12,8 @@ const U64 NOT_AB = 18229723555195321596ULL;
 const U64 NOT_HG = 4557430888798830399ULL;
 
 U64 pawnAttacks [2][64];
+U64 knightAttacks[64];
+U64 kingAttacks[64];
 
 U64 maskPawnAttacks(int side, int pos) {
     U64 bitboard = 0ULL;
@@ -19,24 +21,14 @@ U64 maskPawnAttacks(int side, int pos) {
 
     SET_BIT(bitboard, pos);
 
-    printf("%d", side);
-
     if(!side) { //white
         mask |= ((bitboard >> 7) & NOT_A) | ((bitboard >> 9) & NOT_H);
     } else { //black
         mask |= ((bitboard << 7) & NOT_H) | ((bitboard << 9) & NOT_A);;
     }
+
     return mask;
 }
-
-void initPawnAttacks() {
-    for(int i = 0; i < 64; i++) {
-        pawnAttacks[white][i] = maskPawnAttacks(white, i);
-        pawnAttacks[black][i] = maskPawnAttacks(white, i);
-    }
-}
-
-U64 knightAttacks[2][64];
 
 U64 maskKnightAttacks(int pos) {
     U64 bitboard = 0ULL;
@@ -52,12 +44,52 @@ U64 maskKnightAttacks(int pos) {
     return mask;
 }
 
-void initKnightAttacks() {
-    for(int i = 0; i < 64; i++) {
-        U64 mask = maskKnightAttacks(i);
-        knightAttacks[white][i] = mask;
-        knightAttacks[black][i] = mask;
-        printf("Knight attacks for %d: %llud\n", i, mask);
-        printBitboard(mask);
+U64 maskKingAttacks(int pos) {
+    U64 bitboard = 0ULL;
+    U64 mask = 0ULL;
+
+    SET_BIT(bitboard, pos);
+
+    mask |= bitboard >> 8;
+    mask |= bitboard << 8;
+    mask |= ((bitboard >> 1) & NOT_H);
+    mask |= ((bitboard << 1) & NOT_A);
+    mask |= ((bitboard >> 7) & NOT_A);
+    mask |= ((bitboard << 7) & NOT_H);
+    mask |= ((bitboard >> 9) & NOT_H);
+    mask |= ((bitboard << 9) & NOT_A);
+
+    return mask;
+}
+
+U64 maskBishopAttacks(int pos) {
+    U64 mask = 0ULL;
+
+    int r, f;
+    int tr = pos / 8, tf = pos % 8;
+
+    for(r = tr + 1, f = tf + 1; r < 7 && f < 7; r++, f++) {
+        mask |= (1ULL << (r * 8 + f));
+    }
+    for(r = tr + 1, f = tf - 1; r < 7 && f > 0; r++, f--) {
+        mask |= (1ULL << (r * 8 + f));
+    }
+    for(r = tr - 1, f = tf + 1; r > 0 && f < 7; r--, f++) {
+        mask |= (1ULL << (r * 8 + f));
+    }
+    for(r = tr - 1, f = tf - 1; r > 0 && f > 0; r--, f--) {
+        mask |= (1ULL << (r * 8 + f));
+    }
+
+    return mask;
+}
+
+void init() {
+    for (int i = 0; i < 64; i++)
+    {
+        pawnAttacks[white][i] = maskPawnAttacks(white, i);
+        pawnAttacks[black][i] = maskPawnAttacks(black, i);
+        knightAttacks[i] = maskKnightAttacks(i);
+        kingAttacks[i] = maskKingAttacks(i);
     }
 }

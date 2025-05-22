@@ -2,6 +2,8 @@
 #include "bit.h"
 
 U64 pawnAttacks[2][64];
+U64 knightAttacks[64];
+U64 kingAttacks[64];
 
 const U64 NOT_A;
 /* not A
@@ -57,5 +59,7 @@ const U64 NOT_BH;
 
 U64 maskPawnAttacks(int side, int pos);
 U64 maskKnightAttacks(int pos);
-void initPawnAttacks();
-void initKnightAttacks();
+U64 maskKingAttacks(int pos);
+U64 maskBishopAttacks(int pos);
+U64 maskRookAttacks(int pos);
+void init();
