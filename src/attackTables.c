@@ -35,3 +35,29 @@ void initPawnAttacks() {
         pawnAttacks[black][i] = maskPawnAttacks(white, i);
     }
 }
+
+U64 knightAttacks[2][64];
+
+U64 maskKnightAttacks(int pos) {
+    U64 bitboard = 0ULL;
+    U64 mask = 0ULL;
+
+    SET_BIT(bitboard, pos);
+
+    mask |= ((bitboard >> 15) & NOT_A) | ((bitboard >> 17) & NOT_H);
+    mask |= ((bitboard >> 6) & NOT_AB) | ((bitboard >> 10) & NOT_HG);
+    mask |= ((bitboard << 15) & NOT_H) | ((bitboard << 17) & NOT_A);
+    mask |= ((bitboard << 6) & NOT_HG) | ((bitboard << 10) & NOT_AB);
+    
+    return mask;
+}
+
+void initKnightAttacks() {
+    for(int i = 0; i < 64; i++) {
+        U64 mask = maskKnightAttacks(i);
+        knightAttacks[white][i] = mask;
+        knightAttacks[black][i] = mask;
+        printf("Knight attacks for %d: %llud\n", i, mask);
+        printBitboard(mask);
+    }
+}

@@ -8,13 +8,9 @@ int main() {
 
     U64 bitboard = 0ULL;
 
-    initPawnAttacks();
-    for(int i = 0; i < 64; i++) {
-        printf("white pawn attack %d: ", i);
-        printBitboard(pawnAttacks[white][i]);
-        printf("black pawn attack %d: ", i);
-        printBitboard(pawnAttacks[black][i]);
-    }
+    SET_BIT(bitboard, e4);
+
+    initKnightAttacks();
 
     return 0;
 }

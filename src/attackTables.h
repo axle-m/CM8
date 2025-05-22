@@ -56,4 +56,6 @@ const U64 NOT_AH;
 const U64 NOT_BH;
 
 U64 maskPawnAttacks(int side, int pos);
+U64 maskKnightAttacks(int pos);
 void initPawnAttacks();
+void initKnightAttacks();
