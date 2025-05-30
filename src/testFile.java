@@ -1,15 +1,13 @@
 public class testFile {
-
-    public native long getKnightAttacks(int pos);
+    public native long maskBishopAttacks(int pos);
 
     static {
         System.loadLibrary("chessbridge"); 
     }
 
     public static void main(String[] args) {
-        testFile test = new testFile();
-        int position = 28; // e4
-        long result = test.getKnightAttacks(position);
-        System.out.println("Knight attack bitboard: " + result);
+        testFile t = new testFile();
+        long result = t.maskBishopAttacks(28); // from what i understand e4 is square 28
+        System.out.println("Bitboard result: " + result);
     }
 }
