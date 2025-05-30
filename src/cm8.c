@@ -10,12 +10,19 @@ int main(int argc, char *argv[]) {
     init();
 
     U64 bitboard = 0ULL;
+    U64 block = 0ULL;
 
-    bitboard = maskBishopAttacks(e4);
+    SET_BIT(block, d8);
+    SET_BIT(block, c4);
+    SET_BIT(block, g4);
+    SET_BIT(block, d2);
+
+    printBitboard(block);
+
+
+    bitboard = genRookAttacks(d4, block);
 
     printBitboard(bitboard);
-
-
 
     return 0;
 }

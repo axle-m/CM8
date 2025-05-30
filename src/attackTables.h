@@ -62,4 +62,6 @@ U64 maskKnightAttacks(int pos);
 U64 maskKingAttacks(int pos);
 U64 maskBishopAttacks(int pos);
 U64 maskRookAttacks(int pos);
+U64 genBishopAttacks(int pos, U64 block);
+U64 genRookAttacks(int pos, U64 block);
 void init();

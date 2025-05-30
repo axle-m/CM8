@@ -84,6 +84,88 @@ U64 maskBishopAttacks(int pos) {
     return mask;
 }
 
+U64 maskRookAttacks(int pos) {
+    U64 mask = 0ULL;
+
+    int r, f;
+    int tr = pos / 8, tf = pos % 8;
+
+    for(r = tr + 1; r < 7; r++) {
+        mask |= (1ULL << (r * 8 + tf));
+    }
+    for(r = tr - 1; r > 0; r--) {
+        mask |= (1ULL << (r * 8 + tf));
+    }
+    for(f = tf + 1; f < 7; f++) {
+        mask |= (1ULL << (tr * 8 + f));
+    }
+    for(f = tf - 1; f > 0; f--) {
+        mask |= (1ULL << (tr * 8 + f));
+    }
+
+    return mask;
+}
+
+U64 genBishopAttacks(int pos, U64 block) {
+    U64 mask = 0ULL;
+    U64 bitboard = 0ULL;
+    SET_BIT(bitboard, pos);
+
+    int r, f;
+    int tr = pos / 8, tf = pos % 8;
+
+    for(r = tr + 1, f = tf + 1; r < 8 && f < 8; r++, f++) {
+        mask |= (1ULL << (r * 8 + f));
+        if((1ULL << (r * 8 + f)) & block) break;
+    }
+    for(r = tr + 1, f = tf - 1; r < 8 && f >= 0; r++, f--) {
+        mask |= (1ULL << (r * 8 + f));
+        if((1ULL << (r * 8 + f)) & block) break;
+    }
+    for(r = tr - 1, f = tf + 1; r >= 0 && f < 8; r--, f++) {
+        mask |= (1ULL << (r * 8 + f));
+        if((1ULL << (r * 8 + f)) & block) break;
+    }
+    for(r = tr - 1, f = tf - 1; r >= 0 && f >= 0; r--, f--) {
+        mask |= (1ULL << (r * 8 + f));
+        if((1ULL << (r * 8 + f)) & block) break;
+    }
+
+    block = bitboard & mask;
+
+    return mask;
+}
+
+U64 genRookAttacks(int pos, U64 block) {
+    U64 mask = 0ULL;
+    U64 bitboard = 0ULL;
+    SET_BIT(bitboard, pos);
+
+    int r, f;
+    int tr = pos / 8, tf = pos % 8;
+
+    for(r = tr + 1; r < 8; r++) {
+        mask |= (1ULL << (r * 8 + tf));
+        if((1ULL << (r * 8 + tf)) & block) break;
+    }
+    for(r = tr - 1; r >= 0; r--) {
+        mask |= (1ULL << (r * 8 + tf));
+        if((1ULL << (r * 8 + tf)) & block) break;
+    }
+    for(f = tf + 1; f < 8; f++) {
+        mask |= (1ULL << (tr * 8 + f));
+        if((1ULL << (tr * 8 + f)) & block) break;
+    }
+    for(f = tf - 1; f >= 0; f--) {
+        mask |= (1ULL << (tr * 8 + f));
+        if((1ULL << (tr * 8 + f)) & block) break;
+    }
+
+    block = bitboard & mask;
+
+    return mask;
+}
+
 void init() {
     for (int i = 0; i < 64; i++)
     {
