@@ -29,3 +29,8 @@ int countBits(U64 bitboard) {
     }
     return count;
 }
+
+int getLSBIndex(U64 bitboard) {
+    if (bitboard == 0) return -1; // No bits set
+    return __builtin_ctzll(bitboard); // Count trailing zeros
+}

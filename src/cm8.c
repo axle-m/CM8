@@ -19,6 +19,9 @@ int main(int argc, char *argv[]) {
     SET_BIT(block, d1);
 
     printf("bit count %d\n", countBits(block));
+    int index = getLSBIndex(block);
+    printf("LSB index %d\n", index);
+    printBitboard(block);
 
     return 0;
 }

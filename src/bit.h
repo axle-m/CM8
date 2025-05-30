@@ -43,3 +43,4 @@ enum { white, black };
 
 void printBitboard(U64 bitboard);
 int countBits(U64 bitboard);
+int getLSBIndex(U64 bitboard);
