@@ -20,3 +20,12 @@ void printBitboard(U64 bitboard) {
     //print bitboard as unsigned decimal
     printf("\n      Bitboard: %llud\n", bitboard);
 }
+
+int countBits(U64 bitboard) {
+    int count = 0;
+    while (bitboard) {
+        count++;
+        bitboard &= (bitboard - 1);
+    }
+    return count;
+}

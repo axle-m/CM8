@@ -42,3 +42,4 @@ enum { white, black };
 #endif
 
 void printBitboard(U64 bitboard);
+int countBits(U64 bitboard);

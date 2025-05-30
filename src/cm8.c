@@ -16,13 +16,9 @@ int main(int argc, char *argv[]) {
     SET_BIT(block, c4);
     SET_BIT(block, g4);
     SET_BIT(block, d2);
+    SET_BIT(block, d1);
 
-    printBitboard(block);
-
-
-    bitboard = genRookAttacks(d4, block);
-
-    printBitboard(bitboard);
+    printf("bit count %d\n", countBits(block));
 
     return 0;
 }
