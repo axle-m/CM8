@@ -12,16 +12,14 @@ int main(int argc, char *argv[]) {
     U64 bitboard = 0ULL;
     U64 block = 0ULL;
 
-    SET_BIT(block, d8);
-    SET_BIT(block, c4);
-    SET_BIT(block, g4);
-    SET_BIT(block, d2);
-    SET_BIT(block, d1);
+    U64 mask = maskRookAttacks(a1);
+    printBitboard(mask);
 
-    printf("bit count %d\n", countBits(block));
-    int index = getLSBIndex(block);
-    printf("LSB index %d\n", index);
-    printBitboard(block);
+    printf("LSB index: %d\n", getLSBIndex(mask));
+
+    U64 occupancy = setOccupancy(4095, countBits(mask), mask);
+
+    printBitboard(occupancy);
 
     return 0;
 }

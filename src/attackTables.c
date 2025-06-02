@@ -166,6 +166,27 @@ U64 genRookAttacks(int pos, U64 block) {
     return mask;
 }
 
+U64 setOccupancy(int index, int bitsInMask, U64 attackMask) {
+    U64 occupancy = 0ULL;
+
+    for (int i = 0; i < bitsInMask; i++) {
+        int index = getLSBIndex(attackMask);
+        printf("Index: %d\n", index);
+        CLEAR_BIT(attackMask, index);
+
+        printBitboard(attackMask); 
+        
+        
+        if(index < 0 || index > 63) {
+            continue;
+        }
+        
+        occupancy |= (1ULL << index);
+        
+    }
+    return occupancy;
+}
+
 void init() {
     for (int i = 0; i < 64; i++)
     {

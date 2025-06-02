@@ -64,4 +64,5 @@ U64 maskBishopAttacks(int pos);
 U64 maskRookAttacks(int pos);
 U64 genBishopAttacks(int pos, U64 block);
 U64 genRookAttacks(int pos, U64 block);
+U64 setOccupancy(int index, int bitsInMask, U64 attack_mask);
 void init();
