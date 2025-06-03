@@ -66,7 +66,8 @@ public class ChessGuiClient extends Application {
             Optional<ServerInfo> info = getServerIpAndPort();
             if (info.isPresent()) {
                 this.serverInfo = info.get();
-            } else {
+            } 
+            else {
                 Platform.exit();
                 return;
             }
@@ -151,9 +152,9 @@ public class ChessGuiClient extends Application {
         sendMessage(new MessageCtoS_Chat(msg));
     }
 
-    public void sendListMessage() {
-        sendMessage(new MessageCtoS_List());
-    }
+    // public void sendListMessage() {
+    //     sendMessage(new MessageCtoS_List());
+    // }
 
     public ObjectOutputStream getSocketOut() {
         return socketOut;
