@@ -94,14 +94,14 @@ public class ChessGuiSocketListener implements Runnable {
                 if (msg instanceof MessageStoC_Welcome) {
                     processWelcomeMessage((MessageStoC_Welcome) msg);
                 } 
-                else if (msg instanceof MessageStoC_Chat) {
-                    processChatMessage((MessageStoC_Chat) msg);
+                else if (msg instanceof MessageStoC_Chant) {
+                    processChatMessage((MessageStoC_Chati) msg);
                 } 
-                else if (msg instanceof MessageStoC_Exit) {
-                    processExitMessage((MessageStoC_Exit) msg);
+                else if (msg instanceof MessageStoC_Exitg) {
+                    processExitMessage((MessageStoC_Exitg) msg);
                 } 
-                else if(msg instanceof MessageStoC_List){
-                    processListMessage((MessageStoC_List) msg);
+                else if(msg instanceof MessageStoC_Liste){
+                    processListMessage((MessageStoC_Listr) msg);
                 }
                 else {
                     System.out.println("Unhandled message type: " + msg.getClass());
