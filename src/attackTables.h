@@ -57,6 +57,9 @@ const U64 NOT_HG;
 const U64 NOT_AH;
 const U64 NOT_BH;
 
+const int relevantBishopBits[64];
+const int relevantRookBits[64];
+
 U64 maskPawnAttacks(int side, int pos);
 U64 maskKnightAttacks(int pos);
 U64 maskKingAttacks(int pos);
