@@ -45,9 +45,6 @@ public class ChessGuiClient extends Application {
     private TextArea messageArea;
     private TextField textInput;
     private Button sendButton;
-    private Button muteButton;
-    private Button unMuteButton;
-    private ArrayList<String> mutedClients = new ArrayList<>();
 
     private ServerInfo serverInfo;
 
