@@ -31,8 +31,6 @@ public class ChessGuiSocketListener implements Runnable {
                 chatGuiClient.getStage().setTitle("Chatter - " + username);
                 chatGuiClient.getTextInput().setEditable(true);
                 chatGuiClient.getSendButton().setDisable(false);
-                chatGuiClient.getMuteButton().setDisable(false);
-                chatGuiClient.getUnMuteButton().setDisable(false);
                 chatGuiClient.getMessageArea().appendText("Welcome to the chat, " + username + "\n");
                 chatGuiClient.sendListMessage();
             });
@@ -94,14 +92,14 @@ public class ChessGuiSocketListener implements Runnable {
                 if (msg instanceof MessageStoC_Welcome) {
                     processWelcomeMessage((MessageStoC_Welcome) msg);
                 } 
-                else if (msg instanceof MessageStoC_Chant) {
-                    processChatMessage((MessageStoC_Chati) msg);
+                else if (msg instanceof MessageStoC_Chat) {
+                    processChatMessage((MessageStoC_Chat) msg);
                 } 
-                else if (msg instanceof MessageStoC_Exitg) {
-                    processExitMessage((MessageStoC_Exitg) msg);
+                else if (msg instanceof MessageStoC_Exit) {
+                    processExitMessage((MessageStoC_Exit) msg);
                 } 
-                else if(msg instanceof MessageStoC_Liste){
-                    processListMessage((MessageStoC_Listr) msg);
+                else if(msg instanceof MessageStoC_List){
+                    processListMessage((MessageStoC_List) msg);
                 }
                 else {
                     System.out.println("Unhandled message type: " + msg.getClass());

@@ -24,15 +24,6 @@ public class ChessServerSocketListener  implements Runnable {
         broadcast(new MessageStoC_List(clientList, client.getUserName()), null);
     }
 
-    private void processWhisperMessage(MessageCtoS_Whisper m){
-        System.out.println("Whisper received from " + client.getUserName() + " - broadcasting");
-        for (ClientConnectionData clientUser : clientList) {
-            if(clientUser.getUserName().equals(m.reciever)){
-                broadcastOnly(new MessageStoC_Whisper(client.getUserName(), m.reciever, m.message, clientList), clientUser);
-            }
-        }
-    }
-
     /**
      * Broadcasts a message to all clients connected to the server.
      */
@@ -52,10 +43,10 @@ public class ChessServerSocketListener  implements Runnable {
         }        
     }
 
-    public void broadcastOnly(Message m, ClientConnectionData onlyClient){
+    public void broadcastOnly(Message m, ChessClientConnectionData onlyClient){
         try {
             System.out.println("broadcasting: " + m);
-            for(ClientConnectionData c: clientList){
+            for(ChessClientConnectionData c: clientList){
                 if((c == onlyClient) && (c.getUserName() != null)){
                     c.getOut().writeObject(m);
                 }
@@ -89,9 +80,6 @@ public class ChessServerSocketListener  implements Runnable {
                 }
                 else if(msg instanceof MessageCtoS_List){
                     processListMessage((MessageCtoS_List) msg);
-                }
-                else if(msg instanceof MessageCtoS_Whisper){
-                    processWhisperMessage((MessageCtoS_Whisper) msg);
                 }
                 else {
                     System.out.println("Unhandled message type: " + msg.getClass());

@@ -177,14 +177,6 @@ public class ChessGuiClient extends Application {
         return sendButton;
     }
 
-    public Button getMuteButton() {
-        return muteButton;
-    }
-    
-    public Button getUnMuteButton() {
-        return unMuteButton;
-    }
-
     public ServerInfo getServerInfo() {
         return serverInfo;
     }
@@ -192,11 +184,7 @@ public class ChessGuiClient extends Application {
     public ObservableList<String> getNames() {
         return names;
     }
-
-    public ArrayList<String> getMuteList() {
-        return mutedClients;
-    }
-
+    
     private Optional<ServerInfo> getServerIpAndPort() {
         // In a more polished product, we probably would have the ip /port hardcoded
         // But this a great way to demonstrate making a custom dialog
