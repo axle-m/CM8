@@ -1,3 +1,5 @@
+#ifndef attackTables
+#define attackTables
 #include <stdio.h>
 #include "bit.h"
 #include "randomizingRoutines.h"
@@ -84,3 +86,4 @@ static inline U64 getBishopAttacks(int square, U64 occupancy) {
 }
 
 void initAttackTables();
+#endif
