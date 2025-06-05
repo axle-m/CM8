@@ -4,6 +4,10 @@
 U64 pawnAttacks[2][64];
 U64 knightAttacks[64];
 U64 kingAttacks[64];
+U64 bishopMasks[64];
+U64 rookMasks[64];
+U64 bishopAttacks[64][512];
+U64 rookAttacks[64][4096];
 
 const U64 NOT_A;
 /* not A
@@ -57,8 +61,8 @@ const U64 NOT_HG;
 const U64 NOT_AH;
 const U64 NOT_BH;
 
-const int relevantBishopBits[64];
-const int relevantRookBits[64];
+int relevantBishopBits[64];
+int relevantRookBits[64];
 
 U64 maskPawnAttacks(int side, int pos);
 U64 maskKnightAttacks(int pos);
@@ -68,4 +72,5 @@ U64 maskRookAttacks(int pos);
 U64 genBishopAttacks(int pos, U64 block);
 U64 genRookAttacks(int pos, U64 block);
 U64 setOccupancy(int index, int bitsInMask, U64 attack_mask);
-void init();
+U64 initSliderAttacks(int bishop /*1 for bishop, 0 for rook*/);
+void initAttackTables();

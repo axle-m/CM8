@@ -11,7 +11,7 @@ const U64 NOT_G = 13816973012072644543ULL;
 const U64 NOT_AB = 18229723555195321596ULL;
 const U64 NOT_HG = 4557430888798830399ULL;
 
-const int relevantBishopBits[64] = {
+int relevantBishopBits[64] = {
     6, 5, 5, 5, 5, 5, 5, 6, 
     5, 5, 5, 5, 5, 5, 5, 5,
     5, 5, 7, 7, 7, 7, 5, 5,
@@ -22,7 +22,7 @@ const int relevantBishopBits[64] = {
     6, 5, 5, 5, 5, 5, 5, 6,
 };
 
-const int relevantRookBits[64] = {
+int relevantRookBits[64] = {
     12, 11, 11, 11, 11, 11, 11, 12, 
     11, 10, 10, 10, 10, 10, 10, 11,
     11, 10, 10, 10, 10, 10, 10, 11,
@@ -36,6 +36,12 @@ const int relevantRookBits[64] = {
 U64 pawnAttacks [2][64];
 U64 knightAttacks[64];
 U64 kingAttacks[64];
+
+U64 bishopMasks[64];
+U64 rookMasks[64];
+
+U64 bishopAttacks[64][512];
+U64 rookAttacks[64][4096];
 
 U64 maskPawnAttacks(int side, int pos) {
     U64 bitboard = 0ULL;
@@ -191,30 +197,50 @@ U64 genRookAttacks(int pos, U64 block) {
 U64 setOccupancy(int index, int bitsInMask, U64 attackMask) {
     U64 occupancy = 0ULL;
 
-    for (int i = 0; i < bitsInMask; i++) {
-        int index = getLSBIndex(attackMask);
-        printf("Index: %d\n", index);
-        CLEAR_BIT(attackMask, index);
-
-        printBitboard(attackMask); 
-        
-        
-        if(index < 0 || index > 63) {
-            continue;
-        }
-
-        occupancy |= (1ULL << index);
-        
+    for (int count = 0; count < bitsInMask; count++) {
+        int square = getLSBIndex(attackMask);
+        CLEAR_BIT(attackMask, square);
+        if(index & (1 << count)) occupancy |= (1ULL << square);
     }
+
     return occupancy;
 }
 
-void init() {
+U64 initSliderAttacks(int bishop) {
+    for(int i = 0; i< 64; i++) {
+        bishopMasks[i] = maskBishopAttacks(i);
+        rookMasks[i] = maskRookAttacks(i);
+
+        U64 attackMask = (bishop) ? bishopMasks[i] : rookMasks[i];
+        int relevantBitsCount = countBits(attackMask);
+        int numOccupancies = 1 << relevantBitsCount;
+
+        for(int j = 0; j < numOccupancies; j++) {
+
+            // if(bishop) {
+            //     U64 occupancy = setOccupancy(j, relevantBitsCount, attackMask);
+            //     int magicIndex = (occupancy * bishopMagics[i]) >> (64 - relevantBishopBits[i]);
+            //     bishopAttacks[i][magicIndex] = genBishopAttacks(i, occupancy);
+            // } else {
+            //    U64 occupancy = setOccupancy(j, relevantBitsCount, attackMask);
+            //     int magicIndex = (occupancy * rookMagics[i]) >> (64 - relevantRookBits[i]);
+            //     rookAttacks[i][magicIndex] = genRookAttacks(i, occupancy);
+            // }
+        }
+    }
+
+    return 0ULL;
+}
+
+void initAttackTables() {
     for (int i = 0; i < 64; i++)
     {
         pawnAttacks[white][i] = maskPawnAttacks(white, i);
         pawnAttacks[black][i] = maskPawnAttacks(black, i);
         knightAttacks[i] = maskKnightAttacks(i);
         kingAttacks[i] = maskKingAttacks(i);
+
+        initSliderAttacks(bishop);
+        initSliderAttacks(rook);
     }
 }
