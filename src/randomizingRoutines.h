@@ -2,6 +2,8 @@
 #include "bit.h"
 
 unsigned int RANDOM_STATE;
+const U64 ROOK_MAGICS[64];
+const U64 BISHOP_MAGICS[64];
 
 unsigned int getrand32();
 U64 getrand64();

@@ -1,4 +1,4 @@
-#define U64 unsigned long long
+typedef unsigned long long U64;
 
 #ifndef MACROS
 #define MACROS

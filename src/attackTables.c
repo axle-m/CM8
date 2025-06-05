@@ -3,6 +3,7 @@
 
 #include "bit.h"
 #include "attackTables.h"
+#include "randomizingRoutines.h"
 
 const U64 NOT_A = 18374403900871474942ULL;
 const U64 NOT_B = 18302063728033398269ULL;
@@ -39,7 +40,6 @@ U64 kingAttacks[64];
 
 U64 bishopMasks[64];
 U64 rookMasks[64];
-
 U64 bishopAttacks[64][512];
 U64 rookAttacks[64][4096];
 
@@ -213,24 +213,25 @@ U64 initSliderAttacks(int bishop) {
 
         U64 attackMask = (bishop) ? bishopMasks[i] : rookMasks[i];
         int relevantBitsCount = countBits(attackMask);
-        int numOccupancies = 1 << relevantBitsCount;
+        int numOccupancies = (1 << relevantBitsCount);
 
         for(int j = 0; j < numOccupancies; j++) {
-
-            // if(bishop) {
-            //     U64 occupancy = setOccupancy(j, relevantBitsCount, attackMask);
-            //     int magicIndex = (occupancy * bishopMagics[i]) >> (64 - relevantBishopBits[i]);
-            //     bishopAttacks[i][magicIndex] = genBishopAttacks(i, occupancy);
-            // } else {
-            //    U64 occupancy = setOccupancy(j, relevantBitsCount, attackMask);
-            //     int magicIndex = (occupancy * rookMagics[i]) >> (64 - relevantRookBits[i]);
-            //     rookAttacks[i][magicIndex] = genRookAttacks(i, occupancy);
-            // }
+            if(bishop) {
+                U64 occupancy = setOccupancy(j, relevantBitsCount, attackMask);
+                int magicIndex = (occupancy * BISHOP_MAGICS[i]) >> (64 - relevantBishopBits[i]);
+                bishopAttacks[i][magicIndex] = genBishopAttacks(i, occupancy);
+            } else {
+               U64 occupancy = setOccupancy(j, relevantBitsCount, attackMask);
+                int magicIndex = (occupancy * ROOK_MAGICS[i]) >> (64 - relevantRookBits[i]);
+                rookAttacks[i][magicIndex] = genRookAttacks(i, occupancy);
+            }
         }
     }
 
     return 0ULL;
 }
+
+
 
 void initAttackTables() {
     for (int i = 0; i < 64; i++)
