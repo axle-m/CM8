@@ -78,9 +78,14 @@ U64 genBishopAttacks(int pos, U64 block);
 U64 genRookAttacks(int pos, U64 block);
 U64 setOccupancy(int index, int bitsInMask, U64 attack_mask);
 U64 initSliderAttacks(int bishop /*1 for bishop, 0 for rook*/);
+
 static inline U64 getBishopAttacks(int square, U64 occupancy) {
     int magicIndex = (occupancy * BISHOP_MAGICS[square]) >> (64 - relevantBishopBits[square]);
     return bishopAttacks[square][magicIndex];
+}
+static inline U64 getRookAttacks(int square, U64 occupancy) {
+    int magicIndex = (occupancy * ROOK_MAGICS[square]) >> (64 - relevantRookBits[square]);
+    return rookAttacks[square][magicIndex];
 }
 
 void initAttackTables();
