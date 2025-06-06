@@ -11,3 +11,11 @@ void init() {
     initAttackTables();
     initRandomizingRoutines();
 }
+
+void cleanup(){
+    // for(int i = 0; i < 64; i++) {
+    //     free(mBishopTable[i]);
+    //     free(mRookTable[i]);
+    // }
+    // printf("Cleanup done.\n");
+}

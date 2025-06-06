@@ -1,3 +1,2 @@
-#include <stdio.h>
-
 void init();
+void cleanup();

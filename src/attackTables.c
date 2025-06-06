@@ -12,7 +12,7 @@ const U64 NOT_G = 13816973012072644543ULL;
 const U64 NOT_AB = 18229723555195321596ULL;
 const U64 NOT_HG = 4557430888798830399ULL;
 
-int relevantBishopBits[64] = {
+int relevantBishopBitCounts[64] = {
     6, 5, 5, 5, 5, 5, 5, 6, 
     5, 5, 5, 5, 5, 5, 5, 5,
     5, 5, 7, 7, 7, 7, 5, 5,
@@ -23,7 +23,7 @@ int relevantBishopBits[64] = {
     6, 5, 5, 5, 5, 5, 5, 6,
 };
 
-int relevantRookBits[64] = {
+int relevantRookBitCounts[64] = {
     12, 11, 11, 11, 11, 11, 11, 12, 
     11, 10, 10, 10, 10, 10, 10, 11,
     11, 10, 10, 10, 10, 10, 10, 11,
@@ -208,8 +208,8 @@ U64 setOccupancy(int index, int bitsInMask, U64 attackMask) {
 
 U64 initSliderAttacks(int bishop) {
     for(int i = 0; i< 64; i++) {
-        bishopMasks[i] = maskBishopAttacks(i);
-        rookMasks[i] = maskRookAttacks(i);
+        if(bishop) bishopMasks[i] = maskBishopAttacks(i);
+        else rookMasks[i] = maskRookAttacks(i);
 
         U64 attackMask = (bishop) ? bishopMasks[i] : rookMasks[i];
         int relevantBitsCount = countBits(attackMask);
@@ -218,11 +218,11 @@ U64 initSliderAttacks(int bishop) {
         for(int j = 0; j < numOccupancies; j++) {
             if(bishop) {
                 U64 occupancy = setOccupancy(j, relevantBitsCount, attackMask);
-                int magicIndex = (occupancy * BISHOP_MAGICS[i]) >> (64 - relevantBishopBits[i]);
+                int magicIndex = (occupancy * BISHOP_MAGICS[i]) >> (64 - relevantBishopBitCounts[i]);
                 bishopAttacks[i][magicIndex] = genBishopAttacks(i, occupancy);
             } else {
-               U64 occupancy = setOccupancy(j, relevantBitsCount, attackMask);
-                int magicIndex = (occupancy * ROOK_MAGICS[i]) >> (64 - relevantRookBits[i]);
+                U64 occupancy = setOccupancy(j, relevantBitsCount, attackMask);
+                int magicIndex = (occupancy * ROOK_MAGICS[i]) >> (64 - relevantRookBitCounts[i]);
                 rookAttacks[i][magicIndex] = genRookAttacks(i, occupancy);
             }
         }

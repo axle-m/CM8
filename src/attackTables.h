@@ -66,8 +66,8 @@ int relevantBishopBits[64];
 int relevantRookBits[64];
 U64 bishopMasks[64];
 U64 rookMasks[64];
-U64 bishopAttacks[64][512];
-U64 rookAttacks[64][4096];
+U64 bishopAttacks[64][512]; //256K
+U64 rookAttacks[64][4096]; //2048K
 
 U64 maskPawnAttacks(int side, int pos);
 U64 maskKnightAttacks(int pos);
@@ -79,13 +79,23 @@ U64 genRookAttacks(int pos, U64 block);
 U64 setOccupancy(int index, int bitsInMask, U64 attack_mask);
 U64 initSliderAttacks(int bishop /*1 for bishop, 0 for rook*/);
 
-static inline U64 getBishopAttacks(int square, U64 occupancy) {
-    int magicIndex = (occupancy * BISHOP_MAGICS[square]) >> (64 - relevantBishopBits[square]);
-    return bishopAttacks[square][magicIndex];
+static inline U64 getBishopAttacks(U64 occ, int sq) {
+    printf("mask:\n");
+    printBitboard(bishopMasks[sq]);
+    printf("\nmagic: %llx\n", BISHOP_MAGICS[sq]);
+
+    occ &= bishopMasks[sq];
+    int index = (occ * BISHOP_MAGICS[sq]) >> (64 - relevantBishopBits[sq]);
+    return bishopAttacks[sq][index];
 }
-static inline U64 getRookAttacks(int square, U64 occupancy) {
-    int magicIndex = (occupancy * ROOK_MAGICS[square]) >> (64 - relevantRookBits[square]);
-    return rookAttacks[square][magicIndex];
+
+static inline U64 getRookAttacks(U64 occ, int sq) {
+    printf("mask:\n");
+    printBitboard(rookMasks[sq]);
+    printf("\nmagic: %llx\n", ROOK_MAGICS[sq]);
+    occ &= rookMasks[sq];
+    int index = (occ * ROOK_MAGICS[sq]) >> (64 - relevantRookBits[sq]);
+    return rookAttacks[sq][index];
 }
 
 void initAttackTables();
