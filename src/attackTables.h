@@ -1,3 +1,5 @@
+#ifndef attackTables
+#define attackTables
 #include <stdio.h>
 #include "bit.h"
 #include "randomizingRoutines.h"
@@ -99,3 +101,4 @@ static inline U64 getRookAttacks(U64 occ, int sq) {
 }
 
 void initAttackTables();
+#endif
