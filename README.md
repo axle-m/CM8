@@ -14,4 +14,3 @@ run
         run .out
     make clean
         delete all relevant executable files
-

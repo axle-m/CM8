@@ -8,8 +8,10 @@ int main(int argc, char *argv[]) {
     printf("cm8 engine\n");
     init();
 
-    SET_BIT(bitboards[P], e2);
-    SET_BIT(bitboards[R], a1);
+    printBitboard(occupancies[both]);
+    printBitboard(occupancies[white]);
+    printBitboard(occupancies[black]);
+
     printBoard();
 
     cleanup();

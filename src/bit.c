@@ -65,8 +65,15 @@ uint64 index_to_uint64(int index, int bits, uint64 m) {
     return result;
 }
 
-uint64 bitboards[12];
-uint64 occupancies[3];
+uint64 bitboards[12] = { 
+    0xff000000000000, 0x4200000000000000, 0x2400000000000000, 
+    0x8100000000000000, 0x800000000000000, 0x1000000000000000,
+    0xff00, 0x42, 0x24, 0x81, 0x10, 0x8
+};
+
+uint64 occupancies[3] = {
+    0xffff000000000000, 0xffff, 0xffff00000000ffff
+};
 int side = 0;
 int enpassant = no_sq;
 int castle;
@@ -117,5 +124,5 @@ void printBoard(){
         }
         printf("\n");
     }
-    printf("\n   a b c d e f g h\n");
+    printf("   a b c d e f g h\n");
 }
