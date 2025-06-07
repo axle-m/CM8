@@ -1,4 +1,4 @@
-typedef unsigned long long U64;
+typedef unsigned long long uint64;
 
 #ifndef MACROS
 #define MACROS
@@ -7,7 +7,7 @@ typedef unsigned long long U64;
 #define CLEAR_BIT(bb, pos) (GET_BIT(bb, pos) ? (bb) ^= (1ULL << (pos)) : 0)
 #define SWAP_BITS(bb, pos1, pos2) \
     do { \
-        U64 temp = (bb); \
+        uint64 temp = (bb); \
         int bit1 = GET_BIT(temp, pos1); \
         int bit2 = GET_BIT(temp, pos2); \
         temp = (bit1 ? SET_BIT(temp, pos2) : CLEAR_BIT(temp, pos2)); \
@@ -43,6 +43,9 @@ enum { white, black };
 
 #endif
 
-void printBitboard(U64 bitboard);
-int countBits(U64 bitboard);
-int getLSBIndex(U64 bitboard);
+void printBitboard(uint64 bitboard);
+int countBits(uint64 bitboard);
+int getLSBIndex(uint64 bitboard);
+int pop_1st_bit(uint64 *bb);
+uint64 index_to_uint64(int index, int bits, uint64 m);
+int count_1s(uint64 bb);

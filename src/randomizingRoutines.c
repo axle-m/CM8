@@ -11,150 +11,142 @@
 
 #define USE_32_BIT_MULTIPLICATIONS
 
-#include "bit.h"
-#include "attackTables.h"
-#include "randomizingRoutines.h"
-
-unsigned int RANDOM_STATE = 1804289383;
-
-const U64 ROOK_MAGICS[64] = {
-    0x4010a02202800040ULL, 
-    0x400c202000200010ULL, 
-    0x2410800004010e4ULL, 
-    0xc08043000100102ULL, 
-    0x888400800800204ULL, 
-    0x102004000400104ULL, 
-    0x110a0c020004c2ULL, 
-    0x248000800049ULL, 
-    0x2204440040808080ULL, 
-    0x44900884004028ULL, 
-    0x41a00500010031ULL,
-    0x81000a484088008ULL, 
-    0x880080302208204ULL, 
-    0x80240888008202ULL, 
-    0x101180c10020042ULL,
-    0x8002c002088081ULL, 
-    0xaa5880001004040ULL, 
-    0x10c28a088100a101ULL, 
-    0x4030044000080020ULL,
-    0x204a010001061010ULL, 
-    0xc00802a00004808ULL, 
-    0x402050002008082ULL, 
-    0x8001020000008083ULL, 
-    0x621005a00208101ULL, 
-    0x208b002880800441ULL, 
-    0x15000a100002041ULL, 
-    0x8012004400018222ULL,
-    0x602c100000406101ULL, 
-    0x2b002404041022ULL, 
-    0x4004ca2020005042ULL, 
-    0x6a04014200c10005ULL,
-    0x111904150100cc2ULL, 
-    0x80008240006a40ULL, 
-    0x204000c014101020ULL,
-    0x2404020444408320ULL, 
-    0xd01002081080110ULL, 
-    0x2040040002180542ULL,
-    0x80020800208014ULL, 
-    0x100840302810006ULL, 
-    0x300808004030201ULL, 
-    0x8000100040214028ULL, 
-    0xab4410000a400084ULL, 
-    0x10100c11208204ULL, 
-    0x308100024581018ULL, 
-    0x809001040000508ULL, 
-    0x45a00442032820aULL, 
-    0x2014040802010866ULL, 
-    0x2050808040450441ULL, 
-    0x800080101aa640ULL, 
-    0x400840830406002ULL, 
-    0x1084002008080030ULL, 
-    0x880080460044108ULL, 
-    0x8008282008024ULL, 
-    0x5528020200001402ULL, 
-    0x81820008240846ULL, 
-    0x4000808000820241ULL, 
-    0x582482200001102ULL, 
-    0x400ca500001025ULL, 
-    0x820018940143041ULL, 
-    0x1000050105210bULL, 
-    0x4102308410801ULL, 
-    0x80104020204552aULL, 
-    0x100088420202018eULL, 
-    0x9280228720000049ULL
-};
-const U64 BISHOP_MAGICS[64] = {
-    0x10c348112161014ULL,
-    0x11442908112002a4ULL,
-    0x9c840000091902ULL,
-    0x2802201201441042ULL,
-    0x924003091040ULL,
-    0x4044120010a0c818ULL, 
-    0x804040005048502ULL, 
-    0x2404246000003406ULL,
-    0x409086140021a10ULL,
-    0x4102065240141204ULL,
-    0x3400510120020465ULL, 
-    0x5084111408002404ULL,
-    0x4040280402014a1ULL,
-    0x2422001410008301ULL,
-    0x2482280422009404ULL, 
-    0x901144500000189ULL, 
-    0xa108018800920445ULL, 
-    0xb404228000160860ULL,
-    0xc100620002112498ULL, 
-    0x410920008c088405ULL, 
-    0x2501210020222481ULL,
-    0x210086001801000aULL,
-    0x482390400440082ULL, 
-    0x40501000140b00bULL, 
-    0x4080a0089616270ULL,
-    0x684040000101440ULL,
-    0x1400a40000004809ULL,
-    0x2009010400008180ULL, 
-    0x811040070881080ULL, 
-    0x840500800814202ULL, 
-    0x604c40000012402ULL,
-    0x80a85004028432ULL,
-    0x2050842006080290ULL,
-    0x12a300400031410ULL,
-    0x182000000a809ULL, 
-    0x1200a00200040b2ULL,
-    0x4150410000490224ULL, 
-    0x284b0200020802ULL, 
-    0x1029010004490802ULL,
-    0x2020410131909212ULL,
-    0x48010a2300020110ULL, 
-    0x2814aa0406008404ULL,
-    0x2222010002020104ULL, 
-    0x4090040009042914ULL,
-    0x84050211101105c5ULL,
-    0x20024000400108ULL, 
-    0x8024011002160cULL,
-    0xa5032200440144ULL,
-    0x44054920009008aULL, 
-    0x20200140301048aULL,
-    0x124820900088144ULL, 
-    0x1090920006024012ULL, 
-    0x2212030000848413ULL,
-    0x806030000094424ULL,
-    0x8c004044210802ULL,
-    0x1102104401100301ULL, 
-    0x8801928000002415ULL,
-    0x882060002648151ULL,
-    0x210920000a41082ULL, 
-    0x8a420622a4840400ULL,
-    0x100a12020002c010ULL, 
-    0x810010c21000404ULL,
-    0x208830004045020ULL, 
-    0x404428002022002ULL, 
+#include "driver.h"
+//1804289383
+unsigned int RANDOM_STATE = 2309857210;
+                            
+const uint64 RMagic[64] = {
+    0x408000f2804008a0ULL,
+    0x10c0004010006002ULL,
+    0x200102200088040ULL,
+    0x9100200408100100ULL,
+    0x600341008060060ULL,
+    0x2200081004010200ULL,
+    0x1500048406000100ULL,
+    0x180122241000080ULL,
+    0x4390802040008000ULL,
+    0x1002100400080ULL,
+    0x400801000802000ULL,
+    0x801000080080ULL,
+    0x1001208000500ULL,
+    0x284808004002200ULL,
+    0x4005084080102ULL,
+    0x4002000041062884ULL,
+    0xa088808000304000ULL,
+    0x600808020004000ULL,
+    0x610008010200880ULL,
+    0x90010002100ULL,
+    0x1008008008040080ULL,
+    0x4008080040200ULL,
+    0x300040001080210ULL,
+    0x2510020000804401ULL,
+    0x240004a80058c20ULL,
+    0x10004040002000ULL,
+    0x4420100080200084ULL,
+    0x2021000900100022ULL,
+    0x80080800400ULL,
+    0x1085840080020080ULL,
+    0x2000700400228108ULL,
+    0x9104009200111044ULL,
+    0x1c00400080800020ULL,
+    0x1060804008802008ULL,
+    0x40200084801000ULL,
+    0x280100080800800ULL,
+    0x8204008044804800ULL,
+    0xc0800400800200ULL,
+    0x400014204009008ULL,
+    0x80028702001444ULL,
+    0x10800040a001c010ULL,
+    0x4c0002810002001ULL,
+    0x2181006000c30030ULL,
+    0x100008008080ULL,
+    0xc018000400808008ULL,
+    0x80041020080140ULL,
+    0x4000011002040008ULL,
+    0x4200284144a0001ULL,
+    0x90800020510300ULL,
+    0x400200040100040ULL,
+    0x480410018200100ULL,
+    0xc8000810008080ULL,
+    0x808010010840900ULL,
+    0x76000894101200ULL,
+    0x8850015048024400ULL,
+    0x84431c0200ULL,
+    0x1040800100102041ULL,
+    0x200884000110021ULL,
+    0x3000941200411ULL,
+    0x212002040040812ULL,
+    0x1001002080005ULL,
+    0x3001000400020801ULL,
+    0x51000400820021ULL,
+    0x200a4c4050286ULL,
 };
 
-const int BitTable[64] = {
-  63, 30, 3, 32, 25, 41, 22, 33, 15, 50, 42, 13, 11, 53, 19, 34, 61, 29, 2,
-  51, 21, 43, 45, 10, 18, 47, 1, 54, 9, 57, 0, 35, 62, 31, 40, 4, 49, 5, 52,
-  26, 60, 6, 23, 44, 46, 27, 56, 16, 7, 39, 48, 24, 59, 14, 12, 55, 38, 28,
-  58, 20, 37, 17, 36, 8
+const uint64 BMagic[64] = {
+    0x4088200104003080ULL,
+    0x201a040c50820008ULL,
+    0x4010109224400008ULL,
+    0x802208600100000ULL,
+    0x1104000000020ULL,
+    0x22009004a0010040ULL,
+    0x82088405408020ULL,
+    0x8900804800846000ULL,
+    0x413400882040044ULL,
+    0x100b80104109200ULL,
+    0x110220a2c062000ULL,
+    0x18000c2410808210ULL,
+    0x100040422080000ULL,
+    0x4000110420043611ULL,
+    0x9801040108923000ULL,
+    0x862082282000ULL,
+    0x40a0024089322090ULL,
+    0x5204208808882440ULL,
+    0x8040002042a0200ULL,
+    0x80080c0082004100ULL,
+    0x4806400a00298ULL,
+    0x40480010090c001ULL,
+    0x20040200a4040299ULL,
+    0x802010084908800ULL,
+    0x820052210100220ULL,
+    0xd0c2018284800ULL,
+    0x4704008a440400ULL,
+    0x5004040000410200ULL,
+    0x2210100e0104000ULL,
+    0x105020083008084ULL,
+    0xa160821024010400ULL,
+    0x5c004029010098ULL,
+    0x101084002081004ULL,
+    0x1040842098100200ULL,
+    0x44020104020410ULL,
+    0x100020080180080ULL,
+    0x404040040100ULL,
+    0x10c08600210100ULL,
+    0x10040104006100ULL,
+    0x14340020045100ULL,
+    0x8014222110100402ULL,
+    0x820440460010400ULL,
+    0x2101804002810ULL,
+    0x200002024242804ULL,
+    0x800422009000202ULL,
+    0x44080088080100ULL,
+    0x922820441001400ULL,
+    0x4a80080242101ULL,
+    0x441004100010ULL,
+    0x802828410120000ULL,
+    0x800428401210209ULL,
+    0x2050020880800ULL,
+    0x9011004618200c0ULL,
+    0x154b45012020818ULL,
+    0x20022208210112ULL,
+    0x8002900404808200ULL,
+    0x48602c0048080800ULL,
+    0x8080108208018450ULL,
+    0xc130060044040408ULL,
+    0x4008000202104400ULL,
+    0x5800200041104100ULL,
+    0x4200400510020200ULL,
+    0x11b042048020080ULL,
+    0x4f00401002200ULL,
 };
 
 unsigned int getrand32() {
@@ -168,38 +160,21 @@ unsigned int getrand32() {
     return x;
 }
 
-U64 getrand64() {
-    U64 a, b, c, d;
-    a = (U64)(getrand32()) & 0xFFFF;
-    b = (U64)(getrand32()) & 0xFFFF;
-    c = (U64)(getrand32()) & 0xFFFF;
-    d = (U64)(getrand32()) & 0xFFFF;
+uint64 getrand64() {
+    uint64 a, b, c, d;
+    a = (uint64)(getrand32()) & 0xFFFF;
+    b = (uint64)(getrand32()) & 0xFFFF;
+    c = (uint64)(getrand32()) & 0xFFFF;
+    d = (uint64)(getrand32()) & 0xFFFF;
 
     return a | (b << 16) | (c << 32) | (d << 48);
 }
 
-U64 randomU64fewbits() {
-  return getrand64() & getrand64() & getrand64();
+uint64 randomuint64fewbits() {
+    return getrand64() & getrand64() & getrand64();
 }
 
-int pop1st(U64 *bb) {
-  U64 b = *bb ^ (*bb - 1);
-  unsigned int fold = (unsigned) ((b & 0xffffffff) ^ (b >> 32));
-  *bb &= (*bb - 1);
-  return BitTable[(fold * 0x783a9b23) >> 26];
-}
-
-U64 indexToU64(int index, int bits, U64 m) {
-    int i, j;
-    U64 result = 0ULL;
-    for(i = 0; i < bits; i++) {
-        j = pop1st(&m);
-        if(index & (1 << i)) result |= (1ULL << j);
-    }
-    return result;
-}
-
-int transform(U64 b, U64 magic, int bits) {
+int transform(uint64 b, uint64 magic, int bits) {
 #if defined(USE_32_BIT_MULTIPLICATIONS)
     return (unsigned)((int)b*(int)magic ^ (int)(b>>32)*(int)(magic>>32)) >> (32-bits);
 #else
@@ -207,30 +182,35 @@ int transform(U64 b, U64 magic, int bits) {
 #endif
 }
 
-U64 findMagic(int square, int relevantBits, int bishop) {
-    U64 mask, b[4096], a[4096], used[4096], magic;
-    int i, j, k, n, fail;
-
-    mask = bishop? maskBishopAttacks(square) : maskRookAttacks(square);
-    n = countBits(mask);
-
-    for(i = 0; i < (1 << n); i++) {
-        b[i] = indexToU64(i, n, mask);
-        a[i] = bishop? genBishopAttacks(square, b[i]) : genRookAttacks(square, b[i]);
+uint64 findMagic(int square, int relevant_bits, int bishop)
+{
+    uint64 occupancies[4096];
+    uint64 attacks[4096];
+    uint64 used_attacks[4096];
+    uint64 attack_mask = bishop ? bmask(square) : rmask(square);
+    int occupancy_indicies = 1 << relevant_bits;
+    
+    for (int index = 0; index < occupancy_indicies; index++)
+    {
+        occupancies[index] = setOccupancy(index, relevant_bits, attack_mask);
+        attacks[index] = bishop ? batt(square, occupancies[index]) : ratt(square, occupancies[index]);
     }
-    for(k = 0; k < 100000000; k++) {
-        magic = randomU64fewbits();
-        if(countBits((mask * magic) & 0xFF00000000000000ULL) < 6) continue;
-        for(i = 0; i < 4096; i++) used[i] = 0ULL;
-        for(i = 0, fail = 0; !fail && i < (1 << n); i++) {
-            j = transform(b[i], magic, relevantBits);
-            if(used[j] == 0ULL) used[j] = a[i];
-            else if(used[j] != a[i]) fail = 1;
+
+    // test magic numbers loop
+    for (int random_count = 0; random_count < 100000000; random_count++) {
+        uint64 magic_number = randomuint64fewbits();
+        if (count_1s((attack_mask * magic_number) & 0xFF00000000000000) < 6) continue;
+        memset(used_attacks, 0ULL, sizeof(used_attacks));
+        int index, fail;
+
+        for (index = 0, fail = 0; !fail && index < occupancy_indicies; index++) {
+        int magic_index = (int)((occupancies[index] * magic_number) >> (64 - relevant_bits));
+        if (used_attacks[magic_index] == 0ULL) used_attacks[magic_index] = attacks[index];
+        else if (used_attacks[magic_index] != attacks[index]) fail = 1;
         }
-        if(!fail) return magic;
+
+        if (!fail) return magic_number;
     }
-    printf("***Failed***\n");
-    return 0ULL;
 }
 
 void initMagicNumbers() {

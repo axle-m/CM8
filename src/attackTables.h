@@ -4,15 +4,25 @@
 #include "bit.h"
 #include "randomizingRoutines.h"
 
-U64 pawnAttacks[2][64];
-U64 knightAttacks[64];
-U64 kingAttacks[64];
-U64 bishopMasks[64];
-U64 rookMasks[64];
-U64 bishopAttacks[64][512];
-U64 rookAttacks[64][4096];
+uint64 pawnAttacks[2][64];
+uint64 knightAttacks[64];
+uint64 kingAttacks[64];
+uint64 mBishopAttacks[64][512]; // 256K
+uint64 mRookAttacks[64][4096];   // 2048K
 
-const U64 NOT_A;
+int RBits[64];
+int BBits[64];
+
+typedef struct SMagic SMagic;
+struct SMagic {
+   uint64 mask;  // to mask relevant squares of both lines (no outer squares)
+   uint64 magic; // magic 64-bit factor
+};
+
+SMagic mBishopTbl[64];
+SMagic mRookTbl[64];
+
+const uint64 NOT_A;
 /* not A
     0 1 1 1 1 1 1 1
     0 1 1 1 1 1 1 1
@@ -24,7 +34,7 @@ const U64 NOT_A;
     0 1 1 1 1 1 1 1
 */
 
-const U64 NOT_B;
+const uint64 NOT_B;
 /* not B
     1 0 1 1 1 1 1 1
     1 0 1 1 1 1 1 1
@@ -36,7 +46,7 @@ const U64 NOT_B;
     1 0 1 1 1 1 1 1
 */
 
-const U64 NOT_H;
+const uint64 NOT_H;
 /* not H
     1 1 1 1 1 1 1 0
     1 1 1 1 1 1 1 0
@@ -47,7 +57,7 @@ const U64 NOT_H;
     1 1 1 1 1 1 1 0
     1 1 1 1 1 1 1 0
 */
-const U64 NOT_G;
+const uint64 NOT_G;
 /* not G
     1 1 1 1 1 1 0 1
     1 1 1 1 1 1 0 1
@@ -59,46 +69,37 @@ const U64 NOT_G;
     1 1 1 1 1 1 0 1
 */
 
-const U64 NOT_AB;
-const U64 NOT_HG;
-const U64 NOT_AH;
-const U64 NOT_BH;
+const uint64 NOT_AB;
+const uint64 NOT_HG;
+const uint64 NOT_AH;
+const uint64 NOT_BH;
 
 int relevantBishopBits[64];
 int relevantRookBits[64];
-U64 bishopMasks[64];
-U64 rookMasks[64];
-U64 bishopAttacks[64][512]; //256K
-U64 rookAttacks[64][4096]; //2048K
 
-U64 maskPawnAttacks(int side, int pos);
-U64 maskKnightAttacks(int pos);
-U64 maskKingAttacks(int pos);
-U64 maskBishopAttacks(int pos);
-U64 maskRookAttacks(int pos);
-U64 genBishopAttacks(int pos, U64 block);
-U64 genRookAttacks(int pos, U64 block);
-U64 setOccupancy(int index, int bitsInMask, U64 attack_mask);
-U64 initSliderAttacks(int bishop /*1 for bishop, 0 for rook*/);
+uint64 pmask(int side, int pos);
+uint64 nmask(int pos);
+uint64 kmask(int pos);
+uint64 bmask(int pos);
+uint64 rmask(int pos);
+uint64 batt(int pos, uint64 block);
+uint64 ratt(int pos, uint64 block);
+uint64 setOccupancy(int index, int bitsInMask, uint64 attack_mask);
+void initSliderAttacks();
 
-static inline U64 getBishopAttacks(U64 occ, int sq) {
-    printf("mask:\n");
-    printBitboard(bishopMasks[sq]);
-    printf("\nmagic: %llx\n", BISHOP_MAGICS[sq]);
-
-    occ &= bishopMasks[sq];
-    int index = (occ * BISHOP_MAGICS[sq]) >> (64 - relevantBishopBits[sq]);
-    return bishopAttacks[sq][index];
+static inline uint64 bishopAttacks(uint64 occ, int sq){
+    occ &= mBishopTbl[sq].mask; // mask out irrelevant squares
+    occ *= mBishopTbl[sq].magic; // multiply by magic number
+    occ >>= (64 - BBits[sq]); // shift to get the index
+    return mBishopAttacks[sq][occ]; // return the precomputed attacks
 }
-
-static inline U64 getRookAttacks(U64 occ, int sq) {
-    printf("mask:\n");
-    printBitboard(rookMasks[sq]);
-    printf("\nmagic: %llx\n", ROOK_MAGICS[sq]);
-    occ &= rookMasks[sq];
-    int index = (occ * ROOK_MAGICS[sq]) >> (64 - relevantRookBits[sq]);
-    return rookAttacks[sq][index];
+static inline uint64 rookAttacks(uint64 occ, int sq){
+    occ &= mRookTbl[sq].mask; // mask out irrelevant squares
+    occ *= mRookTbl[sq].magic; // multiply by magic number
+    occ >>= (64 - RBits[sq]); // shift to get the index
+    return mRookAttacks[sq][occ]; // return the precomputed attacks 
 }
 
 void initAttackTables();
+
 #endif

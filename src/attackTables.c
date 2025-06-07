@@ -5,14 +5,24 @@
 #include "attackTables.h"
 #include "randomizingRoutines.h"
 
-const U64 NOT_A = 18374403900871474942ULL;
-const U64 NOT_B = 18302063728033398269ULL;
-const U64 NOT_H = 9187201950435737471ULL; 
-const U64 NOT_G = 13816973012072644543ULL;
-const U64 NOT_AB = 18229723555195321596ULL;
-const U64 NOT_HG = 4557430888798830399ULL;
+const uint64 NOT_A = 18374403900871474942ULL;
+const uint64 NOT_B = 18302063728033398269ULL;
+const uint64 NOT_H = 9187201950435737471ULL; 
+const uint64 NOT_G = 13816973012072644543ULL;
+const uint64 NOT_AB = 18229723555195321596ULL;
+const uint64 NOT_HG = 4557430888798830399ULL;
 
-int relevantBishopBitCounts[64] = {
+uint64 pawnAttacks [2][64];
+uint64 knightAttacks[64];
+uint64 kingAttacks[64];
+
+uint64 mBishopAttacks[64][512]; // 256K
+uint64 mRookAttacks[64][4096];   // 2048K
+
+SMagic mBishopTbl[64];
+SMagic mRookTbl[64];
+
+int BBits[64] = {
     6, 5, 5, 5, 5, 5, 5, 6, 
     5, 5, 5, 5, 5, 5, 5, 5,
     5, 5, 7, 7, 7, 7, 5, 5,
@@ -23,7 +33,7 @@ int relevantBishopBitCounts[64] = {
     6, 5, 5, 5, 5, 5, 5, 6,
 };
 
-int relevantRookBitCounts[64] = {
+int RBits[64] = {
     12, 11, 11, 11, 11, 11, 11, 12, 
     11, 10, 10, 10, 10, 10, 10, 11,
     11, 10, 10, 10, 10, 10, 10, 11,
@@ -34,18 +44,9 @@ int relevantRookBitCounts[64] = {
     12, 11, 11, 11, 11, 11, 11, 12,
 };
 
-U64 pawnAttacks [2][64];
-U64 knightAttacks[64];
-U64 kingAttacks[64];
-
-U64 bishopMasks[64];
-U64 rookMasks[64];
-U64 bishopAttacks[64][512];
-U64 rookAttacks[64][4096];
-
-U64 maskPawnAttacks(int side, int pos) {
-    U64 bitboard = 0ULL;
-    U64 mask = 0ULL;
+uint64 pmask(int side, int pos) {
+    uint64 bitboard = 0ULL;
+    uint64 mask = 0ULL;
 
     SET_BIT(bitboard, pos);
 
@@ -58,9 +59,9 @@ U64 maskPawnAttacks(int side, int pos) {
     return mask;
 }
 
-U64 maskKnightAttacks(int pos) {
-    U64 bitboard = 0ULL;
-    U64 mask = 0ULL;
+uint64 nmask(int pos) {
+    uint64 bitboard = 0ULL;
+    uint64 mask = 0ULL;
 
     SET_BIT(bitboard, pos);
 
@@ -72,9 +73,9 @@ U64 maskKnightAttacks(int pos) {
     return mask;
 }
 
-U64 maskKingAttacks(int pos) {
-    U64 bitboard = 0ULL;
-    U64 mask = 0ULL;
+uint64 kmask(int pos) {
+    uint64 bitboard = 0ULL;
+    uint64 mask = 0ULL;
 
     SET_BIT(bitboard, pos);
 
@@ -90,158 +91,127 @@ U64 maskKingAttacks(int pos) {
     return mask;
 }
 
-U64 maskBishopAttacks(int pos) {
-    U64 mask = 0ULL;
-
-    int r, f;
-    int tr = pos / 8, tf = pos % 8;
-
-    for(r = tr + 1, f = tf + 1; r < 7 && f < 7; r++, f++) {
-        mask |= (1ULL << (r * 8 + f));
-    }
-    for(r = tr + 1, f = tf - 1; r < 7 && f > 0; r++, f--) {
-        mask |= (1ULL << (r * 8 + f));
-    }
-    for(r = tr - 1, f = tf + 1; r > 0 && f < 7; r--, f++) {
-        mask |= (1ULL << (r * 8 + f));
-    }
-    for(r = tr - 1, f = tf - 1; r > 0 && f > 0; r--, f--) {
-        mask |= (1ULL << (r * 8 + f));
-    }
-
-    return mask;
+uint64 bmask(int sq) {
+    uint64 result = 0ULL;
+    int rk = sq/8, fl = sq%8, r, f;
+    for(r=rk+1, f=fl+1; r<=6 && f<=6; r++, f++) result |= (1ULL << (f + r*8));
+    for(r=rk+1, f=fl-1; r<=6 && f>=1; r++, f--) result |= (1ULL << (f + r*8));
+    for(r=rk-1, f=fl+1; r>=1 && f<=6; r--, f++) result |= (1ULL << (f + r*8));
+    for(r=rk-1, f=fl-1; r>=1 && f>=1; r--, f--) result |= (1ULL << (f + r*8));
+    return result;
 }
 
-U64 maskRookAttacks(int pos) {
-    U64 mask = 0ULL;
-
-    int r, f;
-    int tr = pos / 8, tf = pos % 8;
-
-    for(r = tr + 1; r < 7; r++) {
-        mask |= (1ULL << (r * 8 + tf));
-    }
-    for(r = tr - 1; r > 0; r--) {
-        mask |= (1ULL << (r * 8 + tf));
-    }
-    for(f = tf + 1; f < 7; f++) {
-        mask |= (1ULL << (tr * 8 + f));
-    }
-    for(f = tf - 1; f > 0; f--) {
-        mask |= (1ULL << (tr * 8 + f));
-    }
-
-    return mask;
+uint64 rmask(int sq) {
+    uint64 result = 0ULL;
+    int rk = sq/8, fl = sq%8, r, f;
+    for(r = rk+1; r <= 6; r++) result |= (1ULL << (fl + r*8));
+    for(r = rk-1; r >= 1; r--) result |= (1ULL << (fl + r*8));
+    for(f = fl+1; f <= 6; f++) result |= (1ULL << (f + rk*8));
+    for(f = fl-1; f >= 1; f--) result |= (1ULL << (f + rk*8));
+    return result;
 }
 
-U64 genBishopAttacks(int pos, U64 block) {
-    U64 mask = 0ULL;
-    U64 bitboard = 0ULL;
-    SET_BIT(bitboard, pos);
-
-    int r, f;
-    int tr = pos / 8, tf = pos % 8;
-
-    for(r = tr + 1, f = tf + 1; r < 8 && f < 8; r++, f++) {
-        mask |= (1ULL << (r * 8 + f));
-        if((1ULL << (r * 8 + f)) & block) break;
+uint64 batt(int pos, uint64 block) {
+    uint64 result = 0ULL;
+    int rk = pos/8, fl = pos%8, r, f;
+    for(r = rk+1, f = fl+1; r <= 7 && f <= 7; r++, f++) {
+        result |= (1ULL << (f + r*8));
+        if(block & (1ULL << (f + r * 8))) break;
     }
-    for(r = tr + 1, f = tf - 1; r < 8 && f >= 0; r++, f--) {
-        mask |= (1ULL << (r * 8 + f));
-        if((1ULL << (r * 8 + f)) & block) break;
+    for(r = rk+1, f = fl-1; r <= 7 && f >= 0; r++, f--) {
+        result |= (1ULL << (f + r*8));
+        if(block & (1ULL << (f + r * 8))) break;
     }
-    for(r = tr - 1, f = tf + 1; r >= 0 && f < 8; r--, f++) {
-        mask |= (1ULL << (r * 8 + f));
-        if((1ULL << (r * 8 + f)) & block) break;
+    for(r = rk-1, f = fl+1; r >= 0 && f <= 7; r--, f++) {
+        result |= (1ULL << (f + r*8));
+        if(block & (1ULL << (f + r * 8))) break;
     }
-    for(r = tr - 1, f = tf - 1; r >= 0 && f >= 0; r--, f--) {
-        mask |= (1ULL << (r * 8 + f));
-        if((1ULL << (r * 8 + f)) & block) break;
+    for(r = rk-1, f = fl-1; r >= 0 && f >= 0; r--, f--) {
+        result |= (1ULL << (f + r*8));
+        if(block & (1ULL << (f + r * 8))) break;
     }
-
-    block = bitboard & mask;
-
-    return mask;
+    return result;
 }
 
-U64 genRookAttacks(int pos, U64 block) {
-    U64 mask = 0ULL;
-    U64 bitboard = 0ULL;
-    SET_BIT(bitboard, pos);
-
-    int r, f;
-    int tr = pos / 8, tf = pos % 8;
-
-    for(r = tr + 1; r < 8; r++) {
-        mask |= (1ULL << (r * 8 + tf));
-        if((1ULL << (r * 8 + tf)) & block) break;
+uint64 ratt(int pos, uint64 block) {
+    uint64 result = 0ULL;
+    int rk = pos/8, fl = pos%8, r, f;
+    for(r = rk+1; r <= 7; r++) {
+        result |= (1ULL << (fl + r*8));
+        if(block & (1ULL << (fl + r*8))) break;
     }
-    for(r = tr - 1; r >= 0; r--) {
-        mask |= (1ULL << (r * 8 + tf));
-        if((1ULL << (r * 8 + tf)) & block) break;
+    for(r = rk-1; r >= 0; r--) {
+        result |= (1ULL << (fl + r*8));
+        if(block & (1ULL << (fl + r*8))) break;
     }
-    for(f = tf + 1; f < 8; f++) {
-        mask |= (1ULL << (tr * 8 + f));
-        if((1ULL << (tr * 8 + f)) & block) break;
+    for(f = fl+1; f <= 7; f++) {
+        result |= (1ULL << (f + rk*8));
+        if(block & (1ULL << (f + rk*8))) break;
     }
-    for(f = tf - 1; f >= 0; f--) {
-        mask |= (1ULL << (tr * 8 + f));
-        if((1ULL << (tr * 8 + f)) & block) break;
+    for(f = fl-1; f >= 0; f--) {
+        result |= (1ULL << (f + rk*8));
+        if(block & (1ULL << (f + rk*8))) break;
     }
-
-    block = bitboard & mask;
-
-    return mask;
+    return result;
 }
 
-U64 setOccupancy(int index, int bitsInMask, U64 attackMask) {
-    U64 occupancy = 0ULL;
+uint64 setOccupancy(int index, int bitsInMask, uint64 attackMask) {
+    uint64 occupancy = 0ULL;
+    int count = 0;
 
-    for (int count = 0; count < bitsInMask; count++) {
+    while (attackMask) {
         int square = getLSBIndex(attackMask);
-        CLEAR_BIT(attackMask, square);
-        if(index & (1 << count)) occupancy |= (1ULL << square);
+        attackMask &= attackMask - 1;  // clear the LSB
+        if (index & (1 << count)) {
+            occupancy |= (1ULL << square);
+        }
+        count++;
     }
-
     return occupancy;
 }
 
-U64 initSliderAttacks(int bishop) {
-    for(int i = 0; i< 64; i++) {
-        if(bishop) bishopMasks[i] = maskBishopAttacks(i);
-        else rookMasks[i] = maskRookAttacks(i);
+void initSliderAttacks() {
+    printf("Initializing slider attacks...\n");
+    for (int square = 0; square < 64; square++) {
+        //Bishop
+        mBishopTbl[square].mask = bmask(square);
+        mBishopTbl[square].magic = BMagic[square];
+        uint64 bishopMask = mBishopTbl[square].mask;
+        int bishopBits = BBits[square];
+        int bishopSize = 1 << bishopBits;
 
-        U64 attackMask = (bishop) ? bishopMasks[i] : rookMasks[i];
-        int relevantBitsCount = countBits(attackMask);
-        int numOccupancies = (1 << relevantBitsCount);
+        for (int index = 0; index < bishopSize; index++) {
+            uint64 occupancy = setOccupancy(index, bishopBits, mBishopTbl[square].mask);
+            int mIndex = (occupancy * mBishopTbl[square].magic) >> (64 - bishopBits);
+            mBishopAttacks[square][mIndex] = batt(square, occupancy);
+        }
 
-        for(int j = 0; j < numOccupancies; j++) {
-            if(bishop) {
-                U64 occupancy = setOccupancy(j, relevantBitsCount, attackMask);
-                int magicIndex = (occupancy * BISHOP_MAGICS[i]) >> (64 - relevantBishopBitCounts[i]);
-                bishopAttacks[i][magicIndex] = genBishopAttacks(i, occupancy);
-            } else {
-                U64 occupancy = setOccupancy(j, relevantBitsCount, attackMask);
-                int magicIndex = (occupancy * ROOK_MAGICS[i]) >> (64 - relevantRookBitCounts[i]);
-                rookAttacks[i][magicIndex] = genRookAttacks(i, occupancy);
-            }
+        // Rook
+        mRookTbl[square].mask = rmask(square);
+        mRookTbl[square].magic = RMagic[square];
+        uint64 rookMask = mRookTbl[square].mask;
+        int rookBits = RBits[square];
+        int rookSize = 1 << rookBits;
+
+        for (int index = 0; index < rookSize; index++) {
+            uint64 occupancy = setOccupancy(index, rookBits, rookMask);
+            int mIndex = (occupancy * mRookTbl[square].magic) >> (64 - rookBits);
+            mRookAttacks[square][mIndex] = ratt(square, occupancy);
         }
     }
-
-    return 0ULL;
+    printf("Slider attacks initialized.\n");
 }
 
 
-
 void initAttackTables() {
+    printf("Initializing attack tables...\n");
     for (int i = 0; i < 64; i++)
     {
-        pawnAttacks[white][i] = maskPawnAttacks(white, i);
-        pawnAttacks[black][i] = maskPawnAttacks(black, i);
-        knightAttacks[i] = maskKnightAttacks(i);
-        kingAttacks[i] = maskKingAttacks(i);
-
-        initSliderAttacks(bishop);
-        initSliderAttacks(rook);
+        pawnAttacks[white][i] = pmask(white, i);
+        pawnAttacks[black][i] = pmask(black, i);
+        knightAttacks[i] = nmask(i);
+        kingAttacks[i] = kmask(i);
     }
+    initSliderAttacks();
+    printf("Attack tables initialized.\n");
 }

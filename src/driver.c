@@ -2,10 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "bit.h"
-#include "attackTables.h"
-#include "randomizingRoutines.h"
-#include "inputProcessor.h"
+#include "driver.h"
 
 void init() {
     initAttackTables();
