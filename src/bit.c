@@ -26,6 +26,13 @@ int bitScanForward(U64 bb) {
     if (bb == 0) return -1; 
     return __builtin_ctzll(bb); 
 }
+<<<<<<< Updated upstream
+=======
+int bitScanForward(U64 bb) {
+    if (bb == 0) return -1; 
+    return __builtin_ctzll(bb); 
+}
+>>>>>>> Stashed changes
 int countBits(U64 bitboard) {
     int count = 0;
     while (bitboard) {

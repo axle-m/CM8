@@ -2,10 +2,13 @@
 #include "bit.h"
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 U64 pawnAttacks[2][64];
 U64 knightAttacks[64];
 U64 kingAttacks[64];
 =======
+=======
+>>>>>>> Stashed changes
 extern U64 pawnAttacks[2][64];
 extern U64 knightAttacks[64];
 extern U64 kingAttacks[64];
@@ -13,6 +16,9 @@ extern U64 bishopMasks[64];
 extern U64 rookMasks[64];
 extern U64 bishopAttacks[64][512];
 extern U64 rookAttacks[64][4096];
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 
 extern const U64 NOT_A;
@@ -66,6 +72,7 @@ extern const U64 NOT_AB;
 extern const U64 NOT_HG;
 extern const U64 NOT_AH;
 extern const U64 NOT_BH;
+<<<<<<< Updated upstream
 
 <<<<<<< Updated upstream
 U64 maskPawnAttacks(int side, int pos);
@@ -82,6 +89,16 @@ extern U64 rookMasks[64];
 extern U64 bishopAttacks[64][512]; //256K
 extern U64 rookAttacks[64][4096]; //2048K
 
+=======
+
+extern int relevantRookBitCounts[64];
+extern int relevantBishopBitCounts[64];
+extern U64 bishopMasks[64];
+extern U64 rookMasks[64];
+extern U64 bishopAttacks[64][512]; //256K
+extern U64 rookAttacks[64][4096]; //2048K
+
+>>>>>>> Stashed changes
 extern U64 maskPawnAttacks(int side, int pos);
 extern U64 maskKnightAttacks(int pos);
 extern U64 maskKingAttacks(int pos);
