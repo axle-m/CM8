@@ -87,6 +87,9 @@ uint64 ratt(int pos, uint64 block); // generate rook attacks on the fly
 uint64 setOccupancy(int index, int bitsInMask, uint64 attack_mask); // generates occupancy bitboard based on index
 void initSliderAttacks();           // initializes bishop and rook attack tables to be used with magic numbers
 
+// use these inline functions to get bishop and rook attacks
+//  they use a magic number as a hash and run in constant time vs the generating functions above
+
 static inline uint64 bishopAttacks(uint64 occ, int sq){
     occ &= mBishopTbl[sq].mask; // mask out irrelevant squares
     occ *= mBishopTbl[sq].magic; // multiply by magic number
