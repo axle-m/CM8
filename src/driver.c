@@ -2,10 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "bit.h"
-#include "attackTables.h"
-#include "randomizingRoutines.h"
-#include "inputProcessor.h"
+#include "driver.h"
 
 void init() {
     initAttackTables();
@@ -18,7 +15,4 @@ void cleanup(){
     //     free(mRookTable[i]);
     // }
     // printf("Cleanup done.\n");
-}
-void initAll() {
-    init(); // Calls initAttackTables() and initRandomizingRoutines()
 }

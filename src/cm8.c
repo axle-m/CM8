@@ -1,21 +1,17 @@
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 
-#include "bit.h"
-#include "attackTables.h"
-#include "inputProcessor.h"
+#include "driver.h"
 
 int main(int argc, char *argv[]) {
     printf("cm8 engine\n");
     init();
 
-    U64 bitboard = 0ULL;
+    SET_BIT(bitboards[P], e2);
+    SET_BIT(bitboards[R], a1);
+    printBoard();
 
-    bitboard = maskBishopAttacks(e4);
-
-    printBitboard(bitboard);
-
-
-
+    cleanup();
     return 0;
 } 
