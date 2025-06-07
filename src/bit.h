@@ -41,4 +41,12 @@ enum { white, black };
 
 #endif
 
+<<<<<<< Updated upstream
 void printBitboard(U64 bitboard);
+=======
+void printBitboard(U64 bitboard);
+int countBits(U64 bitboard);
+int getLSBIndex(U64 bitboard);
+int bitScanForward(U64 bb);
+
+>>>>>>> Stashed changes

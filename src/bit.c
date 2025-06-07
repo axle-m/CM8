@@ -19,4 +19,24 @@ void printBitboard(U64 bitboard) {
 
     //print bitboard as unsigned decimal
     printf("\n      Bitboard: %llud\n", bitboard);
+<<<<<<< Updated upstream
+=======
+}
+int bitScanForward(U64 bb) {
+    if (bb == 0) return -1; 
+    return __builtin_ctzll(bb); 
+}
+int countBits(U64 bitboard) {
+    int count = 0;
+    while (bitboard) {
+        count++;
+        bitboard &= (bitboard - 1);
+    }
+    return count;
+}
+
+int getLSBIndex(U64 bitboard) {
+    if (bitboard == 0) return -1; // No bits set
+    return __builtin_ctzll(bitboard); // Count trailing zeros
+>>>>>>> Stashed changes
 }

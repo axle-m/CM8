@@ -93,3 +93,15 @@ void init() {
         kingAttacks[i] = maskKingAttacks(i);
     }
 }
+
+U64 getPawnAttacks(int isWhite, int square) {
+    return pawnAttacks[isWhite ? white : black][square];
+}
+
+U64 getKnightAttacks(int square) {
+    return knightAttacks[square];
+}
+
+U64 getQueenAttacks(int square, U64 blockers) {
+    return getBishopAttacks(square, blockers) | getRookAttacks(square, blockers);
+}
