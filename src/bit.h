@@ -4,7 +4,7 @@ typedef unsigned long long uint64;
 #define MACROS
 #define SET_BIT(bb, pos) ((bb) |= (1ULL << (pos)))
 #define GET_BIT(bb, pos) (bb & (1ULL << (pos)) ? 1 : 0)
-#define CLEAR_BIT(bb, pos) (GET_BIT(bb, pos) ? (bb) ^= (1ULL << (pos)) : 0)
+#define CLEAR_BIT(bb, pos)  ((bb) &= ~(1ULL << (pos)))
 #define SWAP_BITS(bb, pos1, pos2) \
     do { \
         uint64 temp = (bb); \

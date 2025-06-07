@@ -11,6 +11,8 @@ int main(int argc, char *argv[]) {
     SET_BIT(bitboards[P], e2);
     printBitboard(bitboards[P]);
 
+    printf("piece on e2: %c\n", asciiPieces[P]);
+
     cleanup();
     return 0;
 }
