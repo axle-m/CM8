@@ -8,20 +8,36 @@ int main(int argc, char *argv[]) {
     printf("cm8 engine\n");
     init();
 
-    parseFen("rnbqkb1r/pp1p1pPp/8/2p1pP2/1P1P4/3P3P/P1P1P3/RNBQKBNR w Kkq a4 0 1");
-    printBoard();
+    printf("Testing random blocker configurations\n");
+    int errors = 0;
+    for(int i = 0; i < 4294967296; i++) {
+        uint64 blocker = randomuint64fewbits();
+        int pos = getrand64() % 64;
 
-    parseFen("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1");
-    printBoard();
+        uint64 generatedAttacks = batt(pos, blocker) | ratt(pos, blocker);
+        uint64 lookupAttacks = queenAttacks(blocker, pos);
 
-    parseFen("r2q1rk1/ppp2ppp/2n1bn2/2b1p3/3pP3/3P1NPP/PPP1NPB1/R1BQ1RK1 b - - 0 9");
-    printBoard();
+        if(i % 1000000 == 0) {
+            printf("Tested %d configurations, found %d errors\n", i, errors);
+        }
 
-    parseFen("8/8/8/8/8/8/8/8 w - - 0 1");
-    printBoard();
-
-    parseFen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
-    printBoard();
+        if(generatedAttacks != lookupAttacks) {
+            printf("Mismatch found!\n");
+            printf("Position: %d\n", pos);
+            printf("Blocker: \n");
+            printBitboard(blocker);
+            printf("Generated Attacks: \n");
+            printBitboard(generatedAttacks);
+            printf("Lookup Attacks: \n");
+            printBitboard(lookupAttacks);
+            errors++;
+            if(errors > 10) {
+                printf("Too many errors, stopping test.\n");
+                break;
+            }
+        }
+    }
+    printf("Testing completed with %d errors found\n", errors);
 
 
     cleanup();

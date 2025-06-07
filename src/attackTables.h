@@ -102,7 +102,9 @@ static inline uint64 rookAttacks(uint64 occ, int sq){
     occ >>= (64 - RBits[sq]); // shift to get the index
     return mRookAttacks[sq][occ]; // return the precomputed attacks 
 }
-
+static inline uint64 queenAttacks(uint64 occ, int sq){
+    return bishopAttacks(occ, sq) | rookAttacks(occ, sq);
+}
 void initAttackTables();            // initializes all the attack tables
 
 #endif
