@@ -50,6 +50,9 @@ int getLSBIndex(U64 bitboard);
 int bitScanForward(U64 bb);
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
