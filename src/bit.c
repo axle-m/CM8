@@ -100,3 +100,22 @@ int char_pieces[] = {
     [q] = q,
     [k] = k
 };
+
+void printBoard(){
+    for(int rank = 0; rank < 8; rank++){
+        printf("%d  ", 8 - rank);
+        for(int file = 0; file < 8; file++){
+            int sq = rank * 8 + file;
+            char piece = '.';
+            for(int pce = P; pce <= k; pce++){
+                if(GET_BIT(bitboards[pce], sq)){
+                    piece = asciiPieces[pce];
+                    break;
+                }
+            }
+            printf("%c ", piece);
+        }
+        printf("\n");
+    }
+    printf("\n   a b c d e f g h\n");
+}

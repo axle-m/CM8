@@ -77,15 +77,15 @@ const uint64 NOT_BH;
 int relevantBishopBits[64];
 int relevantRookBits[64];
 
-uint64 pmask(int side, int pos);
-uint64 nmask(int pos);
-uint64 kmask(int pos);
-uint64 bmask(int pos);
-uint64 rmask(int pos);
-uint64 batt(int pos, uint64 block);
-uint64 ratt(int pos, uint64 block);
-uint64 setOccupancy(int index, int bitsInMask, uint64 attack_mask);
-void initSliderAttacks();
+uint64 pmask(int side, int pos);    // masks for pawn attacks
+uint64 nmask(int pos);              // mask for knight attacks
+uint64 kmask(int pos);              // mask for king attacks
+uint64 bmask(int pos);              // mask for bishop attacks
+uint64 rmask(int pos);              // mask for rook attacks
+uint64 batt(int pos, uint64 block); // generate bishop attacks on the fly
+uint64 ratt(int pos, uint64 block); // generate rook attacks on the fly
+uint64 setOccupancy(int index, int bitsInMask, uint64 attack_mask); // generates occupancy bitboard based on index
+void initSliderAttacks();           // initializes bishop and rook attack tables to be used with magic numbers
 
 static inline uint64 bishopAttacks(uint64 occ, int sq){
     occ &= mBishopTbl[sq].mask; // mask out irrelevant squares
@@ -100,6 +100,6 @@ static inline uint64 rookAttacks(uint64 occ, int sq){
     return mRookAttacks[sq][occ]; // return the precomputed attacks 
 }
 
-void initAttackTables();
+void initAttackTables();            // initializes all the attack tables
 
 #endif
