@@ -73,6 +73,19 @@ static inline int makeMove(int move, int flag){
         CLEAR_BIT(bitboards[piece], from);
         SET_BIT(bitboards[piece], to);
 
+        // handle captures
+        if(capture) {
+            int startPiece, endPiece;
+            if(side == white) { startPiece = p; endPiece = k; }
+            else { startPiece = P; endPiece = K; }
+            for(int pce = startPiece; pce <= endPiece; pce++) {
+                if(GET_BIT(bitboards[pce], to)) {
+                    CLEAR_BIT(bitboards[pce], to);
+                    break;
+                }
+            }
+        }
+
     } else {
         //only make capture moves
         if(GET_MOVE_CAPTURE(move)) makeMove(move, all);
