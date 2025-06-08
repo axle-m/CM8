@@ -4,6 +4,17 @@
 
 #include "moveGenerator.h"
 
+char promotedPieces[11] = {
+    [Q] = 'q',
+    [R] = 'r',
+    [B] = 'b',
+    [N] = 'n',
+    [q] = 'q',
+    [r] = 'r',
+    [b] = 'b',
+    [n] = 'n'
+};
+
 void printAttackedSquares(int side) {
     printf("Squares attacked by %s:\n", side == white ? "White" : "Black");
     uint64 attackedSquares = 0ULL;

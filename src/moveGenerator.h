@@ -1,6 +1,58 @@
 #include "bit.h"
 #include "attackTables.h"
 
+#ifndef MOVE_MACROS
+#define MOVE_MACROS
+
+#define ENCODE_MOVE(from, to, piece, promoted, capture, doublePush, enPassant, castle) \
+    (from) | (to << 6) | (piece << 12) | (promoted << 16) | (capture << 20) | (doublePush << 21) | (enPassant << 22) | (castle << 23)
+#define GET_MOVE_SOURCE(move) ((move) & 0x3f)
+#define GET_MOVE_TARGET(move) (((move) & 0xfc0) >> 6)
+#define GET_MOVE_PIECE(move) (((move) & 0xf000) >> 12)
+#define GET_PROMOTED_PIECE(move) (((move) & 0xf0000) >> 16)
+#define GET_MOVE_CAPTURE(move) (((move) & 0x100000) /* >> 20*/)         // shifts not needed because we just need a boolean (>0 for true)
+#define GET_MOVE_DOUBLE_PUSH(move) (((move) & 0x200000) /* >> 21*/)
+#define GET_MOVE_EN_PASSANT(move) (((move) & 0x400000) /* >> 22*/)
+#define GET_MOVE_CASTLE(move) (((move) & 0x800000) /* >> 23*/)
+#define PRINT_MOVE_COMPLETE(move) printf("%c%s%s%c %s %s %s %s\n", \
+    asciiPieces[GET_MOVE_PIECE(move)], \
+    squareToCoords[GET_MOVE_SOURCE(move)], \
+    squareToCoords[GET_MOVE_TARGET(move)], \
+    promotedPieces[GET_PROMOTED_PIECE(move)], \
+    GET_MOVE_CAPTURE(move) ? "captures" : "", \
+    GET_MOVE_DOUBLE_PUSH(move) ? "double push" : "", \
+    GET_MOVE_EN_PASSANT(move) ? "en passant" : "", \
+    GET_MOVE_CASTLE(move) ? "castle" : "")
+#define PRINT_MOVE(move) printf("%c%s%s", \
+    asciiPieces[GET_MOVE_PIECE(move)], \
+    squareToCoords[GET_MOVE_SOURCE(move)], \
+    squareToCoords[GET_MOVE_TARGET(move)]); \
+    GET_PROMOTED_PIECE(move) ? printf("=%c\n", promotedPieces[GET_PROMOTED_PIECE(move)]) : printf("\n")
+#endif
+
+char promotedPieces[11];
+
+typedef struct moveList {
+    int moves[256];
+    int count;
+} moveList;
+
+static inline void initMoveList(moveList *list) {
+    list->count = 0;
+}
+
+static inline void addMove(moveList *list, int move) {
+    list->moves[list->count] = move;
+    list->count++;
+}
+
+static inline void printMoveList(moveList *list) {
+    for(int i = 0; i < list->count; i++) {
+        PRINT_MOVE_COMPLETE(list->moves[i]);
+    }
+    printf("Total moves: %d\n", list->count);
+}
+
 // returns 1 if the given square is attacked by any piece on the given side
 static inline int isSquareAttacked(int sq, int side){
     // pawns
@@ -18,6 +70,7 @@ static inline int isSquareAttacked(int sq, int side){
 }
 
 void printAttackedSquares(int side); // prints all the squares attacked by the given side
+
 static inline void generateMoves() { // generates all pseudo-legal moves for the current position
     int from, to;
     uint64 bb, attacks;
