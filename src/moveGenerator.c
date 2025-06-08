@@ -15,6 +15,17 @@ char promotedPieces[11] = {
     [n] = 'n'
 };
 
+const int castleUpdate[64] = {
+    7, 15, 15, 15, 3, 15, 15, 11,
+    15, 15, 15, 15, 15, 15, 15, 15,
+    15, 15, 15, 15, 15, 15, 15, 15,
+    15, 15, 15, 15, 15, 15, 15, 15,
+    15, 15, 15, 15, 15, 15, 15, 15,
+    15, 15, 15, 15, 15, 15, 15, 15,
+    15, 15, 15, 15, 15, 15, 15, 15,
+    13, 15, 15, 15, 12, 15, 15, 14
+};
+
 void printAttackedSquares(int side) {
     printf("Squares attacked by %s:\n", side == white ? "White" : "Black");
     uint64 attackedSquares = 0ULL;

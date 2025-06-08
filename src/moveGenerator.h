@@ -53,47 +53,7 @@
 //move flags
 enum { all, capture };
 
-static inline int makeMove(int move, int flag){
-    if(flag == all) {
-        COPY_BOARD;
-
-        // parse move
-        int from = GET_MOVE_SOURCE(move);
-        int to = GET_MOVE_TARGET(move);
-        int piece = GET_MOVE_PIECE(move);
-        int promoted = GET_PROMOTED_PIECE(move);
-        int capture = GET_MOVE_CAPTURE(move);
-        int doublePush = GET_MOVE_DOUBLE_PUSH(move);
-        int enPassant = GET_MOVE_EN_PASSANT(move);
-        int castle = GET_MOVE_CASTLE(move);
-
-
-
-        // move piece
-        CLEAR_BIT(bitboards[piece], from);
-        SET_BIT(bitboards[piece], to);
-
-        // handle captures
-        if(capture) {
-            int startPiece, endPiece;
-            if(side == white) { startPiece = p; endPiece = k; }
-            else { startPiece = P; endPiece = K; }
-            for(int pce = startPiece; pce <= endPiece; pce++) {
-                if(GET_BIT(bitboards[pce], to)) {
-                    CLEAR_BIT(bitboards[pce], to);
-                    break;
-                }
-            }
-        }
-
-    } else {
-        //only make capture moves
-        if(GET_MOVE_CAPTURE(move)) makeMove(move, all);
-        else return 0;
-    }
-
-    return 0;
-}
+const int castleUpdate[64]; // updates castling rights based on the move made
 
 char promotedPieces[11];
 
@@ -396,6 +356,104 @@ static inline void generateMoves(moveList *list) { // generates all pseudo-legal
                 CLEAR_BIT(bb, from);
             }
         }
+    }
+}
+
+static inline int makeMove(int move, int flag){
+    if(flag == all) {
+        COPY_BOARD;
+
+        // parse move
+        int from = GET_MOVE_SOURCE(move);
+        int to = GET_MOVE_TARGET(move);
+        int piece = GET_MOVE_PIECE(move);
+        int promoted = GET_PROMOTED_PIECE(move);
+        int isMoveCapture = GET_MOVE_CAPTURE(move);
+        int doublePush = GET_MOVE_DOUBLE_PUSH(move);
+        int isMoveEnPassant = GET_MOVE_EN_PASSANT(move);
+        int isMoveCastle = GET_MOVE_CASTLE(move);
+
+        // move piece
+        CLEAR_BIT(bitboards[piece], from);
+        SET_BIT(bitboards[piece], to);
+
+        // handle captures
+        if(isMoveCapture) {
+            int startPiece, endPiece;
+            if(side == white) { startPiece = p; endPiece = k; }
+            else { startPiece = P; endPiece = K; }
+            for(int pce = startPiece; pce <= endPiece; pce++) {
+                if(GET_BIT(bitboards[pce], to)) {
+                    CLEAR_BIT(bitboards[pce], to);
+                    break;
+                }
+            }
+        }
+        
+        // handle promotions
+        if(promoted) {
+            CLEAR_BIT(bitboards[piece], to);
+            SET_BIT(bitboards[promoted], to);
+        }
+
+        // handle en passant
+        if(isMoveEnPassant) {
+            (side == white) ? CLEAR_BIT(bitboards[p], to + 8) 
+                            : CLEAR_BIT(bitboards[P], to - 8);
+        }
+        isMoveEnPassant = no_sq;
+
+        // handle double pawn push
+        if(doublePush) {
+            (side == white) ? (enpassant = to + 8)  // update global enpassant variable
+                            : (enpassant = to - 8);
+        }
+
+        // handle castling
+        if(isMoveCastle) {
+            switch (to) {
+            case g1:
+                SWAP_BITS(bitboards[R], h1, f1); break;
+            case c1:
+                SWAP_BITS(bitboards[R], a1, d1); break;
+            case g8:
+                SWAP_BITS(bitboards[r], h8, f8); break;
+            case c8:
+                SWAP_BITS(bitboards[r], a8, d8); break;
+            default:
+                break;
+            }
+        }
+
+        // update castling rights
+        castle &= castleUpdate[from];
+        castle &= castleUpdate[to];
+
+        // update occupancies
+        // reinitializing from scratch
+        // TODO: optimize this
+        occupancies[white] = 0ULL;
+        occupancies[black] = 0ULL;
+        occupancies[both] = 0ULL;
+        for(int pce = P; pce <= K; pce++) {
+            occupancies[white] |= bitboards[pce];
+            occupancies[black] |= bitboards[pce + 6];
+        }
+        occupancies[both] = occupancies[white] | occupancies[black];
+
+        // change side to move
+        side ^= 1;
+        
+        //TODO: review
+        // ensure king is not in check
+        if(isSquareAttacked((side == white ? getLSBIndex(bitboards[k]) : getLSBIndex(bitboards[K])), side)) {
+            TAKE_BACK;
+            return 0;
+        }
+        return 1;
+    } else {
+        if(GET_MOVE_CAPTURE(move)) makeMove(move, all);
+        else return 0;
     }
 }
 
