@@ -1,9 +1,9 @@
 #include "bit.h"
 #include "attackTables.h"
+#include "inputProcessor.h"
 
 #ifndef MOVE_MACROS
 #define MOVE_MACROS
-
 #define ENCODE_MOVE(from, to, piece, promoted, capture, doublePush, enPassant, castle) \
     (from) | (to << 6) | (piece << 12) | (promoted << 16) | (capture << 20) | (doublePush << 21) | (enPassant << 22) | (castle << 23)
 #define GET_MOVE_SOURCE(move) ((move) & 0x3f)
@@ -29,6 +29,41 @@
     squareToCoords[GET_MOVE_TARGET(move)]); \
     GET_PROMOTED_PIECE(move) ? printf("=%c\n", promotedPieces[GET_PROMOTED_PIECE(move)]) : printf("\n")
 #endif
+
+#ifndef COPYPASTE
+#define COPYPASTE
+
+#define COPY_BOARD \
+    uint64 bb_cpy[12], occ_cpy[3]; \
+    int side_cpy, ep_cpy, castle_cpy; \
+    memcpy(bb_cpy, bitboards, 96); \
+    memcpy(occ_cpy, occupancies, 24); \
+    side_cpy = side; \
+    ep_cpy = enpassant; \
+    castle_cpy = castle;
+    //ONLY TAKE BACK IF YOU HAVE COPIED A BOARD PREVIOUSLY
+#define TAKE_BACK \
+    memcpy(bitboards, bb_cpy, 96); \
+    memcpy(occupancies, occ_cpy, 24); \
+    side = side_cpy; \
+    enpassant = ep_cpy; \
+    castle = castle_cpy;
+#endif
+
+//move flags
+enum { all, capture };
+
+static inline int makeMove(int move, int flag){
+    if(flag = all) {
+
+    } else {
+        //only make capture moves
+        if(GET_MOVE_CAPTURE(move)) makeMove(move, all);
+        else return 0;
+    }
+
+    return 0;
+}
 
 char promotedPieces[11];
 
@@ -332,4 +367,11 @@ static inline void generateMoves(moveList *list) { // generates all pseudo-legal
             }
         }
     }
+}
+
+static inline int countMoves(char* fen) {
+    parseFen(fen);
+    moveList list;
+    generateMoves(&list);
+    return list.count;
 }
