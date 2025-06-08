@@ -54,7 +54,24 @@
 enum { all, capture };
 
 static inline int makeMove(int move, int flag){
-    if(flag = all) {
+    if(flag == all) {
+        COPY_BOARD;
+
+        // parse move
+        int from = GET_MOVE_SOURCE(move);
+        int to = GET_MOVE_TARGET(move);
+        int piece = GET_MOVE_PIECE(move);
+        int promoted = GET_PROMOTED_PIECE(move);
+        int capture = GET_MOVE_CAPTURE(move);
+        int doublePush = GET_MOVE_DOUBLE_PUSH(move);
+        int enPassant = GET_MOVE_EN_PASSANT(move);
+        int castle = GET_MOVE_CASTLE(move);
+
+
+
+        // move piece
+        CLEAR_BIT(bitboards[piece], from);
+        SET_BIT(bitboards[piece], to);
 
     } else {
         //only make capture moves
@@ -289,9 +306,9 @@ static inline void generateMoves(moveList *list) { // generates all pseudo-legal
                 while(attacks) {
                     to = getLSBIndex(attacks);
                     //if the to square is occupied by an opponent piece identify it as capture
-                    if(GET_BIT(occupancies[!side], to)) addMove(list, ENCODE_MOVE(from, to, n, 0, 1, 0, 0, 0));
+                    if(GET_BIT(occupancies[!side], to)) addMove(list, ENCODE_MOVE(from, to, piece, 0, 1, 0, 0, 0));
                     //if the to square is empty identify it as a quiet move
-                    else addMove(list, ENCODE_MOVE(from, to, n, 0, 0, 0, 0, 0));
+                    else addMove(list, ENCODE_MOVE(from, to, piece, 0, 0, 0, 0, 0));
                     CLEAR_BIT(attacks, to);
                 }
                 CLEAR_BIT(bb, from);
@@ -306,9 +323,9 @@ static inline void generateMoves(moveList *list) { // generates all pseudo-legal
                 while(attacks) {
                     to = getLSBIndex(attacks);
                     //if the to square is occupied by an opponent piece identify it as capture
-                    if(GET_BIT(occupancies[!side], to)) addMove(list, ENCODE_MOVE(from, to, b, 0, 1, 0, 0, 0));
+                    if(GET_BIT(occupancies[!side], to)) addMove(list, ENCODE_MOVE(from, to, piece, 0, 1, 0, 0, 0));
                     //if the to square is empty identify it as a quiet move
-                    else addMove(list, ENCODE_MOVE(from, to, b, 0, 0, 0, 0, 0));
+                    else addMove(list, ENCODE_MOVE(from, to, piece, 0, 0, 0, 0, 0));
                     CLEAR_BIT(attacks, to);
                 }
                 CLEAR_BIT(bb, from);
@@ -323,9 +340,9 @@ static inline void generateMoves(moveList *list) { // generates all pseudo-legal
                 while(attacks) {
                     to = getLSBIndex(attacks);
                     //if the to square is occupied by an opponent piece identify it as capture
-                    if(GET_BIT(occupancies[!side], to)) addMove(list, ENCODE_MOVE(from, to, r, 0, 1, 0, 0, 0));
+                    if(GET_BIT(occupancies[!side], to)) addMove(list, ENCODE_MOVE(from, to, piece, 0, 1, 0, 0, 0));
                     //if the to square is empty identify it as a quiet move
-                    else addMove(list, ENCODE_MOVE(from, to, r, 0, 0, 0, 0, 0));
+                    else addMove(list, ENCODE_MOVE(from, to, piece, 0, 0, 0, 0, 0));
                     CLEAR_BIT(attacks, to);
                 }
                 CLEAR_BIT(bb, from);
@@ -340,9 +357,9 @@ static inline void generateMoves(moveList *list) { // generates all pseudo-legal
                 while(attacks) {
                     to = getLSBIndex(attacks);
                     //if the to square is occupied by an opponent piece identify it as capture
-                    if(GET_BIT(occupancies[!side], to)) addMove(list, ENCODE_MOVE(from, to, q, 0, 1, 0, 0, 0));
+                    if(GET_BIT(occupancies[!side], to)) addMove(list, ENCODE_MOVE(from, to, piece, 0, 1, 0, 0, 0));
                     //if the to square is empty identify it as a quiet move
-                    else addMove(list, ENCODE_MOVE(from, to, q, 0, 0, 0, 0, 0));
+                    else addMove(list, ENCODE_MOVE(from, to, piece, 0, 0, 0, 0, 0));
                     CLEAR_BIT(attacks, to);
                 }
                 CLEAR_BIT(bb, from);
@@ -358,9 +375,9 @@ static inline void generateMoves(moveList *list) { // generates all pseudo-legal
                 while(attacks) {
                     to = getLSBIndex(attacks);
                     //if the to square is occupied by an opponent piece identify it as capture
-                    if(GET_BIT(occupancies[!side], to)) addMove(list, ENCODE_MOVE(from, to, k, 0, 1, 0, 0, 0));
+                    if(GET_BIT(occupancies[!side], to)) addMove(list, ENCODE_MOVE(from, to, piece, 0, 1, 0, 0, 0));
                     //if the to square is empty identify it as a quiet move
-                    else addMove(list, ENCODE_MOVE(from, to, k, 0, 0, 0, 0, 0));
+                    else addMove(list, ENCODE_MOVE(from, to, piece, 0, 0, 0, 0, 0));
                     CLEAR_BIT(attacks, to);
                 }
                 CLEAR_BIT(bb, from);
