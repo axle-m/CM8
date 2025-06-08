@@ -47,6 +47,10 @@ static inline void addMove(moveList *list, int move) {
 }
 
 static inline void printMoveList(moveList *list) {
+    if(list->count == 0) {
+        printf("No moves generated.\n");
+        return;
+    }
     for(int i = 0; i < list->count; i++) {
         PRINT_MOVE_COMPLETE(list->moves[i]);
     }
@@ -71,7 +75,9 @@ static inline int isSquareAttacked(int sq, int side){
 
 void printAttackedSquares(int side); // prints all the squares attacked by the given side
 
-static inline void generateMoves() { // generates all pseudo-legal moves for the current position
+static inline void generateMoves(moveList *list) { // generates all pseudo-legal moves for the current position
+    initMoveList(list);
+
     int from, to;
     uint64 bb, attacks;
     
@@ -89,19 +95,19 @@ static inline void generateMoves() { // generates all pseudo-legal moves for the
                         //promotion
                         if(from >= a7 && from <= h7){
                             //generate all 4 promotion moves
-                            printf("pawn promotion %s%s=Q\n", squareToCoords[from], squareToCoords[to]);
-                            printf("pawn promotion %s%s=R\n", squareToCoords[from], squareToCoords[to]);
-                            printf("pawn promotion %s%s=B\n", squareToCoords[from], squareToCoords[to]);
-                            printf("pawn promotion %s%s=N\n", squareToCoords[from], squareToCoords[to]);
+                            addMove(list, ENCODE_MOVE(from, to, P, Q, 0, 0, 0, 0));
+                            addMove(list, ENCODE_MOVE(from, to, P, R, 0, 0, 0, 0));
+                            addMove(list, ENCODE_MOVE(from, to, P, B, 0, 0, 0, 0));
+                            addMove(list, ENCODE_MOVE(from, to, P, N, 0, 0, 0, 0));
                         }
                         else {
                         // single push
-                            printf("pawn single push %s%s\n", squareToCoords[from], squareToCoords[to]);
+                            addMove(list, ENCODE_MOVE(from, to, P, 0, 0, 0, 0, 0));
                         // double push
                             if(from >= a2 && from <= h2){
                                 to = from - 16;
                                 if(!GET_BIT(occupancies[both], to)){
-                                    printf("pawn double push %s%s\n", squareToCoords[from], squareToCoords[to]);
+                                    addMove(list, ENCODE_MOVE(from, to, P, 0, 0, 1, 0, 0));
                                 }
                             }
                         }
@@ -113,13 +119,14 @@ static inline void generateMoves() { // generates all pseudo-legal moves for the
                         to = getLSBIndex(attacks);
                         if(from >= a7 && from <= h7){
                             //generate all 4 promotion moves
-                            printf("pawn capture promotion %s%s=Q\n", squareToCoords[from], squareToCoords[to]);
-                            printf("pawn capture promotion %s%s=R\n", squareToCoords[from], squareToCoords[to]);
-                            printf("pawn capture promotion %s%s=B\n", squareToCoords[from], squareToCoords[to]);
-                            printf("pawn capture promotion %s%s=N\n", squareToCoords[from], squareToCoords[to]);
+
+                            addMove(list, ENCODE_MOVE(from, to, P, Q, 1, 0, 0, 0));
+                            addMove(list, ENCODE_MOVE(from, to, P, R, 1, 0, 0, 0));
+                            addMove(list, ENCODE_MOVE(from, to, P, B, 1, 0, 0, 0));
+                            addMove(list, ENCODE_MOVE(from, to, P, N, 1, 0, 0, 0));
                         }
                         else{
-                            printf("pawn capture %s%s\n", squareToCoords[from], squareToCoords[to]);
+                            addMove(list, ENCODE_MOVE(from, to, P, 0, 1, 0, 0, 0));
                         }
                         CLEAR_BIT(attacks, to);
                     }
@@ -127,7 +134,7 @@ static inline void generateMoves() { // generates all pseudo-legal moves for the
                     if(enpassant != no_sq) {
                         uint64 enpassantAttacks = pawnAttacks[white][from] & (1ULL << enpassant);
                         if(enpassantAttacks) {
-                            printf("en passant %s%s\n", squareToCoords[from], squareToCoords[enpassant]);
+                            addMove(list, ENCODE_MOVE(from, enpassant, P, 0, 1, 0, 1, 0));
                         }
                     }
 
@@ -142,7 +149,7 @@ static inline void generateMoves() { // generates all pseudo-legal moves for the
                     //if both kingside squares are empty and do not pass through check
                     if(!GET_BIT(occupancies[both], f1) && !GET_BIT(occupancies[both], g1)) {
                         if(!isSquareAttacked(e1, black) && !isSquareAttacked(f1, black)){
-                            printf("white kingside castle e1g1\n");
+                            addMove(list, ENCODE_MOVE(e1, g1, K, 0, 0, 0, 0, 1));
                         }
                     }
                 }
@@ -152,7 +159,7 @@ static inline void generateMoves() { // generates all pseudo-legal moves for the
                     if(!GET_BIT(occupancies[both], d1) && !GET_BIT(occupancies[both], c1) && !GET_BIT(occupancies[both], b1)) {
                         //if e1 and d1 do not pass through check
                         if(!isSquareAttacked(e1, black) && !isSquareAttacked(d1, black)){
-                            printf("white queenside castle e1c1\n");
+                            addMove(list, ENCODE_MOVE(e1, c1, K, 0, 0, 0, 0, 1));
                         }
                     }
                 }
@@ -169,19 +176,19 @@ static inline void generateMoves() { // generates all pseudo-legal moves for the
                         //promotion
                         if(from >= a2 && from <= h2){
                             //generate all 4 promotion moves
-                            printf("black promotion %s%s=Q\n", squareToCoords[from], squareToCoords[to]);
-                            printf("black promotion %s%s=R\n", squareToCoords[from], squareToCoords[to]);
-                            printf("black promotion %s%s=B\n", squareToCoords[from], squareToCoords[to]);
-                            printf("black promotion %s%s=N\n", squareToCoords[from], squareToCoords[to]);
+                            addMove(list, ENCODE_MOVE(from, to, p, q, 0, 0, 0, 0));
+                            addMove(list, ENCODE_MOVE(from, to, p, r, 0, 0, 0, 0));
+                            addMove(list, ENCODE_MOVE(from, to, p, b, 0, 0, 0, 0));
+                            addMove(list, ENCODE_MOVE(from, to, p, n, 0, 0, 0, 0));
                         }
                         else {
                         // single push
-                            printf("black single push %s%s\n", squareToCoords[from], squareToCoords[to]);
+                            addMove(list, ENCODE_MOVE(from, to, p, 0, 0, 0, 0, 0));
                         // double push
                             if(from >= a7 && from <= h7){
                                 to = from + 16;
                                 if(!GET_BIT(occupancies[both], to)){
-                                    printf("black double push %s%s\n", squareToCoords[from], squareToCoords[to]);
+                                    addMove(list, ENCODE_MOVE(from, to, p, 0, 0, 1, 0, 0));
                                 }
                             }
                         }
@@ -193,13 +200,13 @@ static inline void generateMoves() { // generates all pseudo-legal moves for the
                         to = getLSBIndex(attacks);
                         if(from >= a2 && from <= h2){
                             //generate all 4 promotion moves
-                            printf("pawn capture promotion %s%s=Q\n", squareToCoords[from], squareToCoords[to]);
-                            printf("pawn capture promotion %s%s=R\n", squareToCoords[from], squareToCoords[to]);
-                            printf("pawn capture promotion %s%s=B\n", squareToCoords[from], squareToCoords[to]);
-                            printf("pawn capture promotion %s%s=N\n", squareToCoords[from], squareToCoords[to]);
+                            addMove(list, ENCODE_MOVE(from, to, p, q, 1, 0, 0, 0));
+                            addMove(list, ENCODE_MOVE(from, to, p, r, 1, 0, 0, 0));
+                            addMove(list, ENCODE_MOVE(from, to, p, b, 1, 0, 0, 0));
+                            addMove(list, ENCODE_MOVE(from, to, p, n, 1, 0, 0, 0));
                         }
                         else{
-                            printf("pawn capture %s%s\n", squareToCoords[from], squareToCoords[to]);
+                            addMove(list, ENCODE_MOVE(from, to, p, 0, 1, 0, 0, 0));
                         }
                         CLEAR_BIT(attacks, to);
                     }
@@ -207,7 +214,7 @@ static inline void generateMoves() { // generates all pseudo-legal moves for the
                     if(enpassant != no_sq) {
                         uint64 enpassantAttacks = pawnAttacks[black][from] & (1ULL << enpassant);
                         if(enpassantAttacks) {
-                            printf("en passant %s%s\n", squareToCoords[from], squareToCoords[enpassant]);
+                            addMove(list, ENCODE_MOVE(from, enpassant, p, 0, 1, 0, 1, 0));
                         }
                     }
 
@@ -221,7 +228,7 @@ static inline void generateMoves() { // generates all pseudo-legal moves for the
                     //if both kingside squares are empty and do not pass through check
                     if(!GET_BIT(occupancies[both], f8) && !GET_BIT(occupancies[both], g8)) {
                         if(!isSquareAttacked(e8, white) && !isSquareAttacked(f8, white)){
-                            printf("black kingside castle e8g8\n");
+                            addMove(list, ENCODE_MOVE(e8, g8, k, 0, 0, 0, 0, 1));
                         }
                     }
                 }
@@ -231,7 +238,7 @@ static inline void generateMoves() { // generates all pseudo-legal moves for the
                     if(!GET_BIT(occupancies[both], d8) && !GET_BIT(occupancies[both], c8) && !GET_BIT(occupancies[both], b8)) {
                         //if e8 and d8 do not pass through check
                         if(!isSquareAttacked(e8, white) && !isSquareAttacked(d8, white)){
-                            printf("black queenside castle e8c8\n");
+                            addMove(list, ENCODE_MOVE(e8, c8, k, 0, 0, 0, 0, 1));
                         }
                     }
                 }
@@ -247,9 +254,9 @@ static inline void generateMoves() { // generates all pseudo-legal moves for the
                 while(attacks) {
                     to = getLSBIndex(attacks);
                     //if the to square is occupied by an opponent piece identify it as capture
-                    if(GET_BIT(occupancies[!side], to)) printf("knight capture %s%s\n", squareToCoords[from], squareToCoords[to]);
+                    if(GET_BIT(occupancies[!side], to)) addMove(list, ENCODE_MOVE(from, to, n, 0, 1, 0, 0, 0));
                     //if the to square is empty identify it as a quiet move
-                    else printf("knight move %s%s\n", squareToCoords[from], squareToCoords[to]);
+                    else addMove(list, ENCODE_MOVE(from, to, n, 0, 0, 0, 0, 0));
                     CLEAR_BIT(attacks, to);
                 }
                 CLEAR_BIT(bb, from);
@@ -264,9 +271,9 @@ static inline void generateMoves() { // generates all pseudo-legal moves for the
                 while(attacks) {
                     to = getLSBIndex(attacks);
                     //if the to square is occupied by an opponent piece identify it as capture
-                    if(GET_BIT(occupancies[!side], to)) printf("bishop capture %s%s\n", squareToCoords[from], squareToCoords[to]);
+                    if(GET_BIT(occupancies[!side], to)) addMove(list, ENCODE_MOVE(from, to, b, 0, 1, 0, 0, 0));
                     //if the to square is empty identify it as a quiet move
-                    else printf("bishop move %s%s\n", squareToCoords[from], squareToCoords[to]);
+                    else addMove(list, ENCODE_MOVE(from, to, b, 0, 0, 0, 0, 0));
                     CLEAR_BIT(attacks, to);
                 }
                 CLEAR_BIT(bb, from);
@@ -281,9 +288,9 @@ static inline void generateMoves() { // generates all pseudo-legal moves for the
                 while(attacks) {
                     to = getLSBIndex(attacks);
                     //if the to square is occupied by an opponent piece identify it as capture
-                    if(GET_BIT(occupancies[!side], to)) printf("rook capture %s%s\n", squareToCoords[from], squareToCoords[to]);
+                    if(GET_BIT(occupancies[!side], to)) addMove(list, ENCODE_MOVE(from, to, r, 0, 1, 0, 0, 0));
                     //if the to square is empty identify it as a quiet move
-                    else printf("rook move %s%s\n", squareToCoords[from], squareToCoords[to]);
+                    else addMove(list, ENCODE_MOVE(from, to, r, 0, 0, 0, 0, 0));
                     CLEAR_BIT(attacks, to);
                 }
                 CLEAR_BIT(bb, from);
@@ -298,9 +305,9 @@ static inline void generateMoves() { // generates all pseudo-legal moves for the
                 while(attacks) {
                     to = getLSBIndex(attacks);
                     //if the to square is occupied by an opponent piece identify it as capture
-                    if(GET_BIT(occupancies[!side], to)) printf("queen capture %s%s\n", squareToCoords[from], squareToCoords[to]);
+                    if(GET_BIT(occupancies[!side], to)) addMove(list, ENCODE_MOVE(from, to, q, 0, 1, 0, 0, 0));
                     //if the to square is empty identify it as a quiet move
-                    else printf("queen move %s%s\n", squareToCoords[from], squareToCoords[to]);
+                    else addMove(list, ENCODE_MOVE(from, to, q, 0, 0, 0, 0, 0));
                     CLEAR_BIT(attacks, to);
                 }
                 CLEAR_BIT(bb, from);
@@ -316,9 +323,9 @@ static inline void generateMoves() { // generates all pseudo-legal moves for the
                 while(attacks) {
                     to = getLSBIndex(attacks);
                     //if the to square is occupied by an opponent piece identify it as capture
-                    if(GET_BIT(occupancies[!side], to)) printf("king capture %s%s\n", squareToCoords[from], squareToCoords[to]);
+                    if(GET_BIT(occupancies[!side], to)) addMove(list, ENCODE_MOVE(from, to, k, 0, 1, 0, 0, 0));
                     //if the to square is empty identify it as a quiet move
-                    else printf("king move %s%s\n", squareToCoords[from], squareToCoords[to]);
+                    else addMove(list, ENCODE_MOVE(from, to, k, 0, 0, 0, 0, 0));
                     CLEAR_BIT(attacks, to);
                 }
                 CLEAR_BIT(bb, from);

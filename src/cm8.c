@@ -10,12 +10,11 @@ int main(int argc, char *argv[]) {
     printf("cm8 engine\n");
     init();
 
-    int move = ENCODE_MOVE(e7, e8, p, N, 1, 0, 0, 0);
-    
+    parseFen(killer_position);
+    printBoard();
+
     moveList list;
-    initMoveList(&list);
-    printf("move count: %d\n", list.count);
-    addMove(&list, move);
+    generateMoves(&list);
     printMoveList(&list);
 
     cleanup();
