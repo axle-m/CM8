@@ -5,10 +5,8 @@
 #include "bit.h"
 
 int squareToPos(char *square) {\
-    printf("%c%c\n", square[0], square[1]);
     int file = square[0] - 'a';
     int rank = 8 - (square[1] - '0');
-    printf("File: %d, Rank: %d\n", file, rank);
     return rank * 8 + file;
 }
 

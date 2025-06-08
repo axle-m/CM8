@@ -10,11 +10,15 @@ int main(int argc, char *argv[]) {
     printf("cm8 engine\n");
     init();
 
-    parseFen(start_position);
+    parseFen("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPpP/R3K2R w Kkq - 0 1");
     printBoard();
 
-    printAttackedSquares(white);
-    printAttackedSquares(black);
+    generateMoves();
+
+    parseFen("r2q1rk1/ppp2ppp/2n1bn2/2b1p3/3pP3/3P1NPP/PPP1NPB1/R1BQ1RK1 w - e3 0 9");
+    printBoard();
+
+    generateMoves();
 
     cleanup();
     return 0;

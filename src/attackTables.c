@@ -202,17 +202,6 @@ void initSliderAttacks() {
     printf("Slider attacks initialized.\n");
 }
 
-void printAttackedSquares(int side) {
-    printf("Squares attacked by %s:\n", side == white ? "White" : "Black");
-    uint64 attackedSquares = 0ULL;
-    for (int i = 0; i < 64; i++) {
-        if (isSquareAttacked(i, side)) {
-            attackedSquares |= (1ULL << i);
-        }
-    }
-    printBitboard(attackedSquares);
-}
-
 void initAttackTables() {
     printf("Initializing attack tables...\n");
     for (int i = 0; i < 64; i++)

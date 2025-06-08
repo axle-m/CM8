@@ -8,6 +8,7 @@
 #include "attackTables.h"
 #include "randomizingRoutines.h"
 #include "inputProcessor.h"
+#include "moveGenerator.h"
 
 void init();
 void cleanup();
