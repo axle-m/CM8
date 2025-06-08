@@ -25,3 +25,6 @@ runde:
 	./cm8d.exe
 rundo:
 	./cm8d.out
+quick:
+	make exe
+	make rune

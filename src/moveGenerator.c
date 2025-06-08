@@ -186,13 +186,90 @@ void generateMoves() {
         }    
 
         //gen knight moves
-
+        if(side == white ? (piece == N) : (piece == n)) {
+            while(bb) {
+                from = getLSBIndex(bb);
+                //ensure knight only moves to squares not occupied by same color
+                attacks = knightAttacks[from] & (side == white ? ~occupancies[white] : ~occupancies[black]);
+                while(attacks) {
+                    to = getLSBIndex(attacks);
+                    //if the to square is occupied by an opponent piece identify it as capture
+                    if(GET_BIT(occupancies[!side], to)) printf("knight capture %s%s\n", squareToCoords[from], squareToCoords[to]);
+                    //if the to square is empty identify it as a quiet move
+                    else printf("knight move %s%s\n", squareToCoords[from], squareToCoords[to]);
+                    CLEAR_BIT(attacks, to);
+                }
+                CLEAR_BIT(bb, from);
+            }
+        }
         //gen bishop moves
-
+        if(side == white ? (piece == B) : (piece == b)) {
+            while(bb) {
+                from = getLSBIndex(bb);
+                //ensure bishop only moves to squares not occupied by same color
+                attacks = bishopAttacks(occupancies[both], from) & (side == white ? ~occupancies[white] : ~occupancies[black]);
+                while(attacks) {
+                    to = getLSBIndex(attacks);
+                    //if the to square is occupied by an opponent piece identify it as capture
+                    if(GET_BIT(occupancies[!side], to)) printf("bishop capture %s%s\n", squareToCoords[from], squareToCoords[to]);
+                    //if the to square is empty identify it as a quiet move
+                    else printf("bishop move %s%s\n", squareToCoords[from], squareToCoords[to]);
+                    CLEAR_BIT(attacks, to);
+                }
+                CLEAR_BIT(bb, from);
+            }
+        }
         //gen rook moves
-
+        if(side == white ? (piece == R) : (piece == r)) {
+            while(bb) {
+                from = getLSBIndex(bb);
+                //ensure rook only moves to squares not occupied by same color
+                attacks = rookAttacks(occupancies[both], from) & (side == white ? ~occupancies[white] : ~occupancies[black]);
+                while(attacks) {
+                    to = getLSBIndex(attacks);
+                    //if the to square is occupied by an opponent piece identify it as capture
+                    if(GET_BIT(occupancies[!side], to)) printf("rook capture %s%s\n", squareToCoords[from], squareToCoords[to]);
+                    //if the to square is empty identify it as a quiet move
+                    else printf("rook move %s%s\n", squareToCoords[from], squareToCoords[to]);
+                    CLEAR_BIT(attacks, to);
+                }
+                CLEAR_BIT(bb, from);
+            }
+        }
         //gen queen moves
+        if(side == white ? (piece == Q) : (piece == q)) {
+            while(bb) {
+                from = getLSBIndex(bb);
+                //ensure queen only moves to squares not occupied by same color
+                attacks = queenAttacks(occupancies[both], from) & (side == white ? ~occupancies[white] : ~occupancies[black]);
+                while(attacks) {
+                    to = getLSBIndex(attacks);
+                    //if the to square is occupied by an opponent piece identify it as capture
+                    if(GET_BIT(occupancies[!side], to)) printf("queen capture %s%s\n", squareToCoords[from], squareToCoords[to]);
+                    //if the to square is empty identify it as a quiet move
+                    else printf("queen move %s%s\n", squareToCoords[from], squareToCoords[to]);
+                    CLEAR_BIT(attacks, to);
+                }
+                CLEAR_BIT(bb, from);
+            }
+        }
 
         //gen king moves
+        if(side == white ? (piece == K) : (piece == k)) {
+            while(bb) {
+                from = getLSBIndex(bb);
+                //ensure king only moves to squares not occupied by same color
+                attacks = kingAttacks[from] & (side == white ? ~occupancies[white] : ~occupancies[black]);
+                while(attacks) {
+                    to = getLSBIndex(attacks);
+                    //if the to square is occupied by an opponent piece identify it as capture
+                    if(GET_BIT(occupancies[!side], to)) printf("king capture %s%s\n", squareToCoords[from], squareToCoords[to]);
+                    //if the to square is empty identify it as a quiet move
+                    else printf("king move %s%s\n", squareToCoords[from], squareToCoords[to]);
+                    CLEAR_BIT(attacks, to);
+                }
+                CLEAR_BIT(bb, from);
+            }
+        }
     }
 }

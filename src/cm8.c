@@ -10,7 +10,7 @@ int main(int argc, char *argv[]) {
     printf("cm8 engine\n");
     init();
 
-    parseFen("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPpP/R3K2R w Kkq - 0 1");
+    parseFen("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3KN1R b KQkq - 0 1");
     printBoard();
 
     generateMoves();
