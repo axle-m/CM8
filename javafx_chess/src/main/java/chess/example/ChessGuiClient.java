@@ -45,6 +45,7 @@ public class ChessGuiClient extends Application {
     private TextArea messageArea;
     private TextField textInput;
     private Button sendButton;
+    private Button challengeButton;
 
     private ServerInfo serverInfo;
 
@@ -82,7 +83,7 @@ public class ChessGuiClient extends Application {
         listView.setPrefSize(200, 250);
         listView.setEditable(false);
         listView.setItems(names);
-        names.add("Everyone");
+        names.add("Bot");
         listView.setCellFactory(param -> new RadioListCell());
         borderPane.setLeft(listView);
 
@@ -93,9 +94,12 @@ public class ChessGuiClient extends Application {
         sendButton = new Button("Send");
         sendButton.setDisable(true);
         sendButton.setOnAction(e -> sendChatMessage());
+        challengeButton = new Button("Challenge");
+        challengeButton.setDisable(true);
+        challengeButton.setOnAction(e -> sendChallengeMessage());
 
         HBox hbox = new HBox();
-        hbox.getChildren().addAll(new Label("Message: "), textInput, sendButton);
+        hbox.getChildren().addAll(new Label("Message: "), textInput, sendButton, challengeButton);
         HBox.setHgrow(textInput, Priority.ALWAYS);
         borderPane.setBottom(hbox);
 
@@ -132,6 +136,12 @@ public class ChessGuiClient extends Application {
         } catch (IOException ex) {
             System.out.println("Exception caught when sending Message");
             ex.printStackTrace();
+        }
+    }
+
+    private void sendChallengeMessage(){
+        if(((RadioButton)group.getSelectedToggle()).getText().equals("Bot")){
+            stage.close();
         }
     }
 

@@ -47,9 +47,7 @@ public class ChessGuiSocketListener implements Runnable {
         // TODO
         //
         Platform.runLater(() -> {
-            if(!chatGuiClient.getMuteList().contains(m.userName)){
-                chatGuiClient.getMessageArea().appendText(m.userName + ": " + m.msg + "\n");
-            }
+            chatGuiClient.getMessageArea().appendText(m.userName + ": " + m.msg + "\n");
         });
     }
 
@@ -66,7 +64,7 @@ public class ChessGuiSocketListener implements Runnable {
     private void processListMessage(MessageStoC_List m){
         Platform.runLater(() -> {
             chatGuiClient.getNames().clear();
-            chatGuiClient.getNames().add("Everyone");
+            chatGuiClient.getNames().add("Bot");
             for(int i = 0; i < m.userNames.size(); i++){
                 if(!m.userNames.get(i).equals(username)){
                     chatGuiClient.getNames().add(m.userNames.get(i));
