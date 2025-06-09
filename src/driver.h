@@ -11,6 +11,7 @@
 #include "moveGenerator.h"
 
 int getBestMove();
+void oneVsOne();
 void init();
 void cleanup();
 uint64 unix_time_ms();

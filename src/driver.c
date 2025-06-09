@@ -4,6 +4,37 @@
 
 #include "driver.h"
 
+void oneVsOne(){ 
+    // parseFen(start_position);
+    // char player = 'W';
+    // char *move = (char *)malloc(10 * sizeof(char));
+
+    // while(1) {
+    //     printf("Player %c's turn. Enter your move: ", player);
+    //     fgets(move, 10, stdin);
+    //     move[strcspn(move, "\n")] = 0;  // Remove newline character
+
+    //     if(strcmp(move, "exit") == 0) {
+    //         printf("Exiting game.\n");
+    //         free(move);
+    //         return;
+    //     }
+
+    //     int promotionFlag = 0;
+
+    //     if((move[0] == 'P'|| move[0] == 'p') && (squareToPos(move + 3) < h8 || squareToPos(move + 3) > a1)) {
+    //         promotionFlag = 1;
+    //     }
+
+    //     if(!makePlayerMove(move, promotionFlag)) {
+    //         printf("Invalid move. Try again.\n");
+    //     }
+
+    //     player = (player == 'W') ? 'B' : 'W'; // Switch player
+    //     printBoard();
+    // }
+}
+
 int getBestMove(){
     return 0;
 }

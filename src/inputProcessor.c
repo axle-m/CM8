@@ -30,6 +30,11 @@ int makePlayerMove(char *move, int promotion) {
         default: return 0;
     }
 
+    if(!GET_BIT(bitboards[piece], from)) {
+        printf("Invalid move: piece not on square %s\n", squareToCoords[from]);
+        return 0;
+    }
+
     int promotedPiece = 0;
     if(promotion) {
         switch(move[5]) {
@@ -60,13 +65,19 @@ int makePlayerMove(char *move, int promotion) {
 
     COPY_BOARD;
 
-    printf("player move: \n");
-    PRINT_MOVE_COMPLETE(encoded);
+    moveList *list = malloc(sizeof(moveList));
+    initMoveList(list);
+    generateMoves(list);
+    for(int i = 0; i < list->count; i++) {
+        if(list->moves[i] == encoded) {
+            makeMove(list->moves[i], capture);
+            return 1;
+        }
 
-    // make the move
-    // if(makeMove(encoded, capture)) return 1;
-    // else { TAKE_BACK; return 0; }
-    return 1;
+    }
+    free(list);
+    TAKE_BACK;
+    return 0;
 }
 
 int squareToPos(char *square) {
