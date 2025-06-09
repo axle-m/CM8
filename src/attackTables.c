@@ -202,7 +202,6 @@ void initSliderAttacks() {
     printf("Slider attacks initialized.\n");
 }
 
-
 void initAttackTables() {
     printf("Initializing attack tables...\n");
     for (int i = 0; i < 64; i++)

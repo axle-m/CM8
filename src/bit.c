@@ -65,19 +65,26 @@ uint64 index_to_uint64(int index, int bits, uint64 m) {
     return result;
 }
 
-uint64 bitboards[12];
-uint64 occupancies[3];
-int side = 0;
+uint64 bitboards[12] = { 
+    0xff000000000000, 0x4200000000000000, 0x2400000000000000, 
+    0x8100000000000000, 0x800000000000000, 0x1000000000000000,
+    0xff00, 0x42, 0x24, 0x81, 0x8, 0x10
+};
+
+uint64 occupancies[3] = {
+    0xffff000000000000, 0xffff, 0xffff00000000ffff
+};
+int side = white;
 int enpassant = no_sq;
-int castle;
+int castle = WK + WQ + BK + BQ;
 const char *squareToCoords[] = {
-    "a8", "b8", "c8", "d8", "e8", "f8", "g8", "h8"
-    "a7", "b7", "c7", "d7", "e7", "f7", "g7", "h7"
-    "a6", "b6", "c6", "d6", "e6", "f6", "g6", "h6"
-    "a5", "b5", "c5", "d5", "e5", "f5", "g5", "h5"
-    "a4", "b4", "c4", "d4", "e4", "f4", "g4", "h4"
-    "a3", "b3", "c3", "d3", "e3", "f3", "g3", "h3"
-    "a2", "b2", "c2", "d2", "e2", "f2", "g2", "h2"
+    "a8", "b8", "c8", "d8", "e8", "f8", "g8", "h8",
+    "a7", "b7", "c7", "d7", "e7", "f7", "g7", "h7",
+    "a6", "b6", "c6", "d6", "e6", "f6", "g6", "h6",
+    "a5", "b5", "c5", "d5", "e5", "f5", "g5", "h5",
+    "a4", "b4", "c4", "d4", "e4", "f4", "g4", "h4",
+    "a3", "b3", "c3", "d3", "e3", "f3", "g3", "h3",
+    "a2", "b2", "c2", "d2", "e2", "f2", "g2", "h2",
     "a1", "b1", "c1", "d1", "e1", "f1", "g1", "h1"
 };
 
@@ -118,4 +125,14 @@ void printBoard(){
         printf("\n");
     }
     printf("\n   a b c d e f g h\n");
+    printf("  Side:           %s\n", !side ? "w" : "b");
+    printf("  En Passant:    %s\n", enpassant == no_sq ? "no" : squareToCoords[enpassant]);
+    printf("  Castle:      %c%c%c%c\n", 
+        castle & WK ? 'K' : '-',
+        castle & WQ ? 'Q' : '-',
+        castle & BK ? 'k' : '-',
+        castle & BQ ? 'q' : '-'
+    );
+
+    printf("\n");
 }

@@ -188,7 +188,10 @@ static inline uint64 rookAttacks(uint64 occ, int sq){
     return mRookAttacks[sq][occ]; // return the precomputed attacks 
 >>>>>>> 62ee2dc8c871bba702002c27d05864cc29ba792d
 }
+static inline uint64 queenAttacks(uint64 occ, int sq){
+    return bishopAttacks(occ, sq) | rookAttacks(occ, sq); // return the precomputed attacks
+}
 
-void initAttackTables();            // initializes all the attack tables
+void initAttackTables(); // initializes all the attack tables
 
 #endif
