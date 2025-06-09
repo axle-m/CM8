@@ -3,7 +3,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.SocketException;
-import java.util.ArrayList;
 import java.util.List;
 
 public class ServerSocketListener  implements Runnable {
@@ -17,7 +16,6 @@ public class ServerSocketListener  implements Runnable {
     }
 
     private void setup() throws IOException{
-        // This code should really be done in the separate thread
         ObjectOutputStream socketOut = new ObjectOutputStream(socket.getOutputStream());
         ObjectInputStream socketIn = new ObjectInputStream(socket.getInputStream());
         String name = socket.getInetAddress().getHostName();
@@ -28,20 +26,8 @@ public class ServerSocketListener  implements Runnable {
         System.out.println("added client " + name);
     }
     
-    public void broadcast(Message m, ClientConnectionData skipClient) {
-        try {
-            System.out.println("broadcasting: " + m);
-            for (ClientConnectionData c : clientList){
-                // if c equals skipClient, then c.
-                // or if c hasn't set a userName yet (still joining the server)
-                if ((c != skipClient) && (c.getUserName()!= null)){
-                    c.getOut().writeObject(m);
-                }
-            }
-        } catch (Exception ex) {
-            System.out.println("broadcast caught exception: " + ex);
-            ex.printStackTrace();
-        }        
+    private void processMoveMessage(MessageCtoS_move m){
+        
     }
 
     @Override
@@ -50,13 +36,15 @@ public class ServerSocketListener  implements Runnable {
             setup();
             ObjectInputStream in = client.getInput();
 
-            MessageCtoS_Join joinMessage = (MessageCtoS_Join) in.readObject();
+            MessageCtoS_join joinMessage = (MessageCtoS_join) in.readObject();
             client.setUserName(joinMessage.userName);
-            broadcast(new MessageStoC_Welcome(joinMessage), client);
             while(true){
                 Message msg = (Message) in.readObject();
                 if(msg instanceof MessageCtoS_move move){
                     processMoveMessage(move);
+                }
+                else if(msg instanceof MessageCtoS_Exit){
+                    break;
                 }
             }
 
@@ -69,11 +57,8 @@ public class ServerSocketListener  implements Runnable {
                 ex.printStackTrace();
             }
         } finally {
-            //Remove client from clientList
             clientList.remove(client); 
 
-            // Notify everyone that the user left.
-            broadcast(new MessageStoC_Exit(client.getUserName()), client);
             try {
                 client.getSocket().close();
             } catch (IOException ex) {}
