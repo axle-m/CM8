@@ -8,7 +8,7 @@
 #define cmk_position "r2q1rk1/ppp2ppp/2n1bn2/2b1p3/3pP3/3P1NPP/PPP1NPB1/R1BQ1RK1 b - - 0 9 "
 #define repetitions "2r3k1/R7/8/1R6/8/8/P4KPP/8 w - - 0 40 "
 
-int makePlayerMove(char *move); //${piece}${from}${to} ex Pe2e4
+int makePlayerMove(char *move, int promotion); //${piece}${from}${to}, ex (Pe2e4, 0), (Pe7e8Q, 1) if move is a promotion pass in 1 as argument, otherwise 0
 int squareToPos(char square[]);
 void parseFen(char *fen);
 void processMove(char *move);
