@@ -4,7 +4,9 @@
 
 #include "driver.h"
 
-
+int getBestMove(){
+    return 0;
+}
 
 void init() {
     initAttackTables();

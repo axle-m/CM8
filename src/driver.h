@@ -10,6 +10,7 @@
 #include "inputProcessor.h"
 #include "moveGenerator.h"
 
+int getBestMove();
 void init();
 void cleanup();
 uint64 unix_time_ms();
