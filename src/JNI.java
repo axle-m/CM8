@@ -1,8 +1,8 @@
 public class JNI {
-    public native int makePlayerMove(String move);
+    public native int makePlayerMove(String move, int promotion);
     public native int getBestMove();
 
     static {
-        System.loadLibrary("yourNativeLibName"); // load your JNI C library
+        System.loadLibrary("chess"); // load your JNI C library
     }
 }

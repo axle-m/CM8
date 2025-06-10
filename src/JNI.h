@@ -10,10 +10,10 @@ extern "C" {
 /*
  * Class:     JNI
  * Method:    makePlayerMove
- * Signature: (Ljava/lang/String;)I
+ * Signature: (Ljava/lang/String;I)I
  */
 JNIEXPORT jint JNICALL Java_JNI_makePlayerMove
-  (JNIEnv *, jobject, jstring);
+  (JNIEnv *, jobject, jstring, jint);
 
 /*
  * Class:     JNI

@@ -1,6 +1,7 @@
 #include "bit.h"
 #include "attackTables.h"
 #include "inputProcessor.h"
+#include <string.h>
 
 #ifndef MOVE_MACROS
 #define MOVE_MACROS
