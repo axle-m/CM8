@@ -6,7 +6,7 @@
 // JNI naming: Java_<Package>_<Class>_<MethodName>
 // If no package: Java_<ClassName>_<MethodName>
 
-JNIEXPORT jint JNICALL Java_JNI_makePlayerMove(JNIEnv *env, jobject obj, jstring move) {
+JNIEXPORT jint JNICALL Java_JNI_makePlayerMove(JNIEnv *env, jobject obj, jstring move, jint promotion) {
     // Convert Java string to C string
     const char *c_move = (*env)->GetStringUTFChars(env, move, NULL);
     
@@ -14,7 +14,7 @@ JNIEXPORT jint JNICALL Java_JNI_makePlayerMove(JNIEnv *env, jobject obj, jstring
         return -1;  // OutOfMemoryError is thrown by JVM automatically
     }
 
-    int result = makePlayerMove((char *)c_move);
+    int result = makePlayerMove((char *)c_move, (int)promotion);
 
     // Release the string
     (*env)->ReleaseStringUTFChars(env, move, c_move);
