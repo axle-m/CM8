@@ -11,11 +11,9 @@ int main(int argc, char *argv[]) {
     printf("cm8 engine\n");
     init();
 
-    parseFen(start_position);
-    makePlayerMove("Pe2e4", 0);
-    makePlayerMove("pe7e5", 0);
+    parseFen("rnbqkbnr/pppppppp/8/8/3P4/8/PPP1PPPP/RNBQKBNR b KQkq - 0 1");
     printBoard();
-    printBitboard(bitboards[P]);
+    printf("score: %d\n", evaluate());
 
     cleanup();
     return 0;
