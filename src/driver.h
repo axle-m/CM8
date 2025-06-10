@@ -10,6 +10,9 @@
 #include "inputProcessor.h"
 #include "moveGenerator.h"
 
+#define LIMIT 5000 //time limit in ms
+uint64 START_TIME; // start time in ms
+
 void oneVsOne();
 void init();
 void cleanup();
@@ -59,10 +62,55 @@ int bestMove;
 
 uint64 nodes;
 
+static inline int quiescence(int alpha, int beta) {
+    int standPat = evaluate();
+    if(standPat >= beta) return beta;
+    if(standPat > alpha) alpha = standPat;
+    // if(unix_time_ms() - START_TIME > LIMIT) {
+    //     return alpha; // time limit exceeded
+    // }
+    //if(depth == 0) return alpha; // quiescence search depth limit reached
+
+    // Generate all possible captures
+    moveList captures[1];
+    generateMoves(captures);
+
+    for(int i = 0; i < captures->count; i++) {
+        COPY_BOARD;
+        ply++;
+
+        int move = captures->moves[i];
+
+        // make the move
+        if(!makeMove(move, capture)){
+            ply--;
+            continue;
+        }
+
+        // negamax
+        int score = -quiescence(-beta, -alpha);
+
+        // take back the move
+        TAKE_BACK;
+        ply--;
+
+        if(score >= beta) {
+            return beta; // fail high
+        }
+
+        if(score > alpha) {
+            alpha = score;
+        }
+    }
+
+    return alpha;
+}
+
 static inline int negamax(int alpha, int beta, int depth){
     if (depth == 0) {
         nodes++;
-        return evaluate();
+        //return evaluate(); // return evaluation at leaf nodes
+        return quiescence(alpha, beta); // quiescence search at leaf nodes
     }
 
     int isKingInCheck = isSquareAttacked((side == white ? getLSBIndex(bitboards[k]) : getLSBIndex(bitboards[K])), side ^ 1);

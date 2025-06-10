@@ -71,6 +71,28 @@ static inline void addMove(moveList *list, int move) {
     list->count++;
 }
 
+static inline void sortMoveList(moveList *list) {
+    moveList *captures = malloc(sizeof(moveList));
+    initMoveList(captures);
+    moveList *nonCaptures = malloc(sizeof(moveList));
+    initMoveList(nonCaptures);
+    for(int i = 0; i < list->count; i++) {
+        if(GET_MOVE_CAPTURE(list->moves[i])) {
+            addMove(captures, list->moves[i]);
+        } else {
+            addMove(nonCaptures, list->moves[i]);
+        }
+    }
+
+    // copy captures first, then non-captures
+    memcpy(list->moves, captures->moves, captures->count * sizeof(int));
+    memcpy(list->moves + captures->count, nonCaptures->moves, nonCaptures->count * sizeof(int));
+
+    list->count = captures->count + nonCaptures->count;
+    free(captures);
+    free(nonCaptures);
+}
+
 static inline void printMoveList(moveList *list) {
     if(list->count == 0) {
         printf("No moves generated.\n");
@@ -357,6 +379,9 @@ static inline void generateMoves(moveList *list) { // generates all pseudo-legal
             }
         }
     }
+
+    //order list
+    sortMoveList(list);   
 }
 
 static inline int makeMove(int move, int flag){
