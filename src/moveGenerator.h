@@ -101,7 +101,7 @@ static inline int isSquareAttacked(int sq, int side){
 void printAttackedSquares(int side); // prints all the squares attacked by the given side
 
 static inline void generateMoves(moveList *list) { // generates all pseudo-legal moves for the current position
-    initMoveList(list);
+    list->count = 0; // reset move list
 
     int from, to;
     uint64 bb, attacks;

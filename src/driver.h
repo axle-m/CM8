@@ -10,7 +10,6 @@
 #include "inputProcessor.h"
 #include "moveGenerator.h"
 
-int getBestMove();
 void oneVsOne();
 void init();
 void cleanup();
@@ -53,8 +52,83 @@ static inline int evaluate() {
         }
     }
 
-
     return score * (side == white ? 1 : -1);
+}
+
+int bestMove;
+
+uint64 nodes;
+
+static inline int negamax(int alpha, int beta, int depth){
+    if (depth == 0) {
+        nodes++;
+        return evaluate();
+    }
+
+    int isKingInCheck = isSquareAttacked((side == white ? getLSBIndex(bitboards[k]) : getLSBIndex(bitboards[K])), side ^ 1);
+
+    legalMovesCount = 0;
+
+    int bestSoFar;
+    int oldAlpha = alpha;
+
+    moveList moves[1];
+    generateMoves(moves);
+    
+    for(int i = 0; i < moves->count; i++) {
+        COPY_BOARD;
+        ply++;
+
+        int move = moves->moves[i];
+
+        // make the move
+        if(!makeMove(move, all)) {
+            ply--;
+            continue;
+        }
+
+        // negamax
+        int score = -negamax(-beta, -alpha, depth - 1);
+
+        // take back the move
+        TAKE_BACK;
+        ply--;
+
+        legalMovesCount++;
+
+        if(score >= beta) {
+            return beta; // fail high
+        }
+        
+        if(score > alpha) {
+            alpha = score;
+            if(ply == 0) {
+                bestSoFar = move; // store the best move at root level
+            }
+        }
+    }
+
+    if(legalMovesCount == 0) {
+        if(isKingInCheck) {
+            return -49000 + ply; // checkmate
+        } else {
+            return 0; // stalemate
+        }
+    }
+
+    if(oldAlpha != alpha) {
+        bestMove = bestSoFar; // update the best move if alpha has changed
+    }
+
+    //fails low
+    return alpha;
+}
+
+static inline int getBestMove(int depth) {
+    int score = negamax(-50000, 50000, depth);
+    printf("Best: ");
+    PRINT_MOVE(bestMove);
+    return bestMove;
 }
 
 #endif

@@ -119,13 +119,9 @@ const int mirrorScore[128] =
 	a8, b8, c8, d8, e8, f8, g8, h8
 };
 
-
-
-int getBestMove(){
-    return 0;
-}
-
 void init() {
+    nodes = 0;
+    bestMove = 0;
     initAttackTables();
     initRandomizingRoutines();
 }

@@ -7,13 +7,28 @@
 #include "driver.h"
 #include "boardState.h"
 
+#define depth 4
+
 int main(int argc, char *argv[]) {
     printf("cm8 engine\n");
     init();
 
-    parseFen("rnbqkbnr/pppppppp/8/8/3P4/8/PPP1PPPP/RNBQKBNR b KQkq - 0 1");
+    parseFen(start_position);
+    printf("Initial board:\n");
     printBoard();
-    printf("score: %d\n", evaluate());
+
+    // uint64 time = unix_time_ms();
+    // int bestMove = getBestMove(depth);
+    // uint64 taken = unix_time_ms() - time;
+    // PRINT_MOVE_COMPLETE(bestMove);
+    // printf("Time taken: %llu ms\n", taken);
+
+    while(1){
+        int move = getBestMove(depth);
+        makeMove(move, all);
+        printBoard();
+        getchar();
+    }
 
     cleanup();
     return 0;
