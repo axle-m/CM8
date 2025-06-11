@@ -18,10 +18,26 @@ JNIEXPORT jint JNICALL Java_JNI_makePlayerMove
 /*
  * Class:     JNI
  * Method:    getBestMove
- * Signature: ()I
+ * Signature: (I)I
  */
 JNIEXPORT jint JNICALL Java_JNI_getBestMove
+  (JNIEnv *, jobject, jint);
+
+/*
+ * Class:     JNI
+ * Method:    playBestMove
+ * Signature: ()I
+ */
+JNIEXPORT jint JNICALL Java_JNI_playBestMove
   (JNIEnv *, jobject);
+
+/*
+ * Class:     JNI
+ * Method:    playBestFromFen
+ * Signature: (Ljava/lang/String;)I
+ */
+JNIEXPORT jint JNICALL Java_JNI_playBestFromFen
+  (JNIEnv *, jobject, jstring);
 
 #ifdef __cplusplus
 }

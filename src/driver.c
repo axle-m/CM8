@@ -5,7 +5,7 @@
 #include "driver.h"
 
 int search_depth = 6;
-
+int bestMove = 0; //ERROR IS HERE?
 void recalibrate(){
     int bits = count_1s(occupancies[both]);
     if(bits < 25){

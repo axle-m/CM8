@@ -38,22 +38,22 @@ enum { WK = 1, WQ = 2, BK = 4, BQ = 8 };
 
 enum { P, N, B, R, Q, K, p, n, b, r, q, k, EMPTY };
 
-uint64 bitboards[12];                        // bitboards for each piece type
-uint64 occupancies[3];                       // 0 - white, 1 - black, 2 - both
-int side;
-int enpassant;
-int castle;
-int legalMovesCount;                        
-const char *squareToCoords[64];             // maps 0-63 to a1-h8
-char asciiPieces[12];                       // maps piece enums to ascii chars
-int char_pieces[12];                        // maps ascii chars to piece enums
+extern uint64 bitboards[12];                        // bitboards for each piece type
+extern uint64 occupancies[3];                       // 0 - white, 1 - black, 2 - both
+extern int side;
+extern int enpassant;
+extern int castle;
+extern int legalMovesCount;                        
+extern const char *squareToCoords[64];             // maps 0-63 to a1-h8
+extern char asciiPieces[12];                       // maps piece enums to ascii chars
+extern int char_pieces[12];                        // maps ascii chars to piece enums
 
 #endif
 
-void printBitboard(uint64 bitboard);        // prints the bitboard in a readable 2D format
-int countBits(uint64 bitboard);             // counts the number of set bits (1s) in the bitboard
-int getLSBIndex(uint64 bitboard);           // returns the index (0-63) of the least significant bit that is set to 1
-int pop_1st_bit(uint64 *bb);                // pops and returns the index of the least significant bit that is set to 1
-uint64 index_to_uint64(int index, int bits, uint64 m); // converts an index to a bitboard based on the given mask
-int count_1s(uint64 bb);                    // also counts the number of set bits (1s) in the bitboard - to be removed
-void printBoard();                          // prints the entire board
+extern void printBitboard(uint64 bitboard);        // prints the bitboard in a readable 2D format
+extern int countBits(uint64 bitboard);             // counts the number of set bits (1s) in the bitboard
+extern int getLSBIndex(uint64 bitboard);           // returns the index (0-63) of the least significant bit that is set to 1
+extern int pop_1st_bit(uint64 *bb);                // pops and returns the index of the least significant bit that is set to 1
+extern uint64 index_to_uint64(int index, int bits, uint64 m); // converts an index to a bitboard based on the given mask
+extern int count_1s(uint64 bb);                    // also counts the number of set bits (1s) in the bitboard - to be removed
+extern void printBoard();                          // prints the entire board

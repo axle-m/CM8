@@ -57,9 +57,9 @@
 //move flags
 enum { all, capture };
 
-const int castleUpdate[64]; // updates castling rights based on the move made
+extern const int castleUpdate[64]; // updates castling rights based on the move made
 
-char promotedPieces[11];
+extern char promotedPieces[11];
 
 typedef struct moveList {
     int moves[256];

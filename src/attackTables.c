@@ -15,7 +15,8 @@ const uint64 NOT_HG = 4557430888798830399ULL;
 uint64 pawnAttacks [2][64];
 uint64 knightAttacks[64];
 uint64 kingAttacks[64];
-
+int relevantBishopBits[64];
+int relevantRookBits[64];
 uint64 mBishopAttacks[64][512]; // 256K
 uint64 mRookAttacks[64][4096];   // 2048K
 
@@ -171,7 +172,7 @@ uint64 setOccupancy(int index, int bitsInMask, uint64 attackMask) {
 }
 
 void initSliderAttacks() {
-    // printf("Initializing slider attacks...\n");
+    printf("Initializing slider attacks...\n");
     for (int square = 0; square < 64; square++) {
         //Bishop
         mBishopTbl[square].mask = bmask(square);
@@ -199,11 +200,11 @@ void initSliderAttacks() {
             mRookAttacks[square][mIndex] = ratt(square, occupancy);
         }
     }
-    // printf("Slider attacks initialized.\n");
+    printf("Slider attacks initialized.\n");
 }
 
 void initAttackTables() {
-    // printf("Initializing attack tables...\n");
+    printf("Initializing attack tables...\n");
     for (int i = 0; i < 64; i++)
     {
         pawnAttacks[white][i] = pmask(white, i);
@@ -212,5 +213,5 @@ void initAttackTables() {
         kingAttacks[i] = kmask(i);
     }
     initSliderAttacks();
-    // printf("Attack tables initialized.\n");
+    printf("Attack tables initialized.\n");
 }

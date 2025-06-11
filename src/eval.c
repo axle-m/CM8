@@ -1,5 +1,6 @@
 #include "eval.h"
-
+int killerMoves[2][64];
+int historyMoves[12][64];
 uint64 nodes = 0;
 
 int materialScores[12] = {

@@ -6,24 +6,24 @@
 #define eval
 #include "moveGenerator.h"
 #include "bit.h"
+#include "globals.h"
+extern int materialScores[12];
+extern const int pawn_pcsq[64];
+extern const int knight_pcsq[64];
+extern const int rook_pcsq[64];
+extern const int king_pcsq[64];
+extern const int bishop_pcsq[64];
+extern const int king_endgame_pcsq[64];
+extern const int mirrorScore[128];
+extern const int mvv_lva[12][12];
 
-int materialScores[12];
-const int pawn_pcsq[64];
-const int knight_pcsq[64];
-const int rook_pcsq[64];
-const int king_pcsq[64];
-const int bishop_pcsq[64];
-const int king_endgame_pcsq[64];
-const int mirrorScore[128];
-const int mvv_lva[12][12];
-
-int ply;
+extern int ply;
 
 // [id][ply]
-int killerMoves[2][64];
+extern int killerMoves[2][64];
 
 // [piece][pos]
-int historyMoves[12][64]; // history table for each piece type and square
+extern int historyMoves[12][64]; // history table for each piece type and square
 
 static inline int evaluate() {
     int score = 0;
@@ -69,9 +69,9 @@ static inline int evaluate() {
     return score * (side == white ? 1 : -1);
 }
 
-int bestMove;
+extern int bestMove;
 
-uint64 nodes;
+extern uint64 nodes;
 
 static inline int scoreMove(int move){
     if(GET_MOVE_CAPTURE(move)) {
