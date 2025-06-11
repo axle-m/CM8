@@ -72,26 +72,33 @@ static inline void addMove(moveList *list, int move) {
     list->count++;
 }
 
+static inline int compareCaps(const void *a, const void *b) {
+    int pieceA = GET_MOVE_PIECE(*(int *)a);
+    int pieceB = GET_MOVE_PIECE(*(int *)b);
+    return pieceA - pieceB; // Sort in ascending order
+}
+
+static inline int compareNonCaps(const void *a, const void *b) {
+    int pieceA = GET_MOVE_PIECE(*(int *)a);
+    int pieceB = GET_MOVE_PIECE(*(int *)b);
+    return pieceB - pieceA; // Sort in descending order
+}
+
 static inline void sortMoveList(moveList *list) {
-    moveList *captures = malloc(sizeof(moveList));
-    initMoveList(captures);
-    moveList *nonCaptures = malloc(sizeof(moveList));
-    initMoveList(nonCaptures);
+    int captures[256], nonCaptures[256];
+    int capCount = 0, nonCapCount = 0;
     for(int i = 0; i < list->count; i++) {
-        if(GET_MOVE_CAPTURE(list->moves[i])) {
-            addMove(captures, list->moves[i]);
-        } else {
-            addMove(nonCaptures, list->moves[i]);
-        }
+        if(GET_MOVE_CAPTURE(list->moves[i]))
+            captures[capCount++] = list->moves[i];
+        else
+            nonCaptures[nonCapCount++] = list->moves[i];
     }
-
-    // copy captures first, then non-captures
-    memcpy(list->moves, captures->moves, captures->count * sizeof(int));
-    memcpy(list->moves + captures->count, nonCaptures->moves, nonCaptures->count * sizeof(int));
-
-    list->count = captures->count + nonCaptures->count;
-    free(captures);
-    free(nonCaptures);
+    qsort(captures, capCount, sizeof(int), compareCaps);
+    qsort(nonCaptures, nonCapCount, sizeof(int), compareNonCaps);
+    memcpy(list->moves, captures, capCount * sizeof(int));
+    memcpy(list->moves + capCount, nonCaptures, nonCapCount * sizeof(int));
+    list->count = capCount + nonCapCount;
+    // Sort captures by piece value (higher value first)
 }
 
 static inline void printMoveList(moveList *list) {

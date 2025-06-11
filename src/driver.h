@@ -19,18 +19,19 @@ void cleanup();
 uint64 unix_time_ms();
 
 int materialScores[12];
-const int pawnScore[64];
-const int knightScore[64];
-const int rookScore[64];
-const int kingScore[64];
-const int bishopScore[64];
-const int kingScore[64];
+const int pawn_pcsq[64];
+const int knight_pcsq[64];
+const int rook_pcsq[64];
+const int king_pcsq[64];
+const int bishop_pcsq[64];
+const int king_endgame_pcsq[64];
 const int mirrorScore[128];
 
 static inline int evaluate() {
     int score = 0;
     uint64 bb;
     int piece, pos;
+    int pieces = count_1s(occupancies[both]);
 
     for(int pce = P; pce <= k; pce++) {
         bb = bitboards[pce];
@@ -38,17 +39,17 @@ static inline int evaluate() {
             pos = pop_1st_bit(&bb);
             score += materialScores[pce];
             switch(pce) {
-                case P: score += pawnScore[pos]; break;
-                case N: score += knightScore[pos]; break;
-                case B: score += bishopScore[pos]; break;
-                case R: score += rookScore[pos]; break;
-                case K: score += kingScore[pos]; break;
+                case P: score += pawn_pcsq[pos]; break;
+                case N: score += knight_pcsq[pos]; break;
+                case B: score += bishop_pcsq[pos]; break;
+                case R: score += rook_pcsq[pos]; break;
+                case K: score += king_pcsq[pos]; break;
 
-                case p: score -= pawnScore[mirrorScore[pos]]; break;
-                case n: score -= knightScore[mirrorScore[pos]]; break;
-                case b: score -= bishopScore[mirrorScore[pos]]; break;
-                case r: score -= rookScore[mirrorScore[pos]]; break;
-                case k: score -= kingScore[mirrorScore[pos]]; break;
+                case p: score -= pawn_pcsq[mirrorScore[pos]]; break;
+                case n: score -= knight_pcsq[mirrorScore[pos]]; break;
+                case b: score -= bishop_pcsq[mirrorScore[pos]]; break;
+                case r: score -= rook_pcsq[mirrorScore[pos]]; break;
+                case k: score -= king_pcsq[mirrorScore[pos]]; break;
                 
                 default: break;
             }
