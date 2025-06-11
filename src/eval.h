@@ -68,6 +68,7 @@ int bestMove;
 uint64 nodes;
 
 static inline int scoreMove(int move){
+    printf("scoring move...\n");
     if(GET_MOVE_CAPTURE(move)) {
         int piece = P;
         int start, end;
@@ -76,14 +77,15 @@ static inline int scoreMove(int move){
 
         //TODO: optimize this
         for(int pce = start; pce <= end; pce++) {
-            printf("%d ", pce);
+            printBitboard(bitboards[pce]);
             if(GET_BIT(bitboards[pce], GET_MOVE_TARGET(move))) {
+                printf("found piece %d at target square %d\n", pce, GET_MOVE_TARGET(move));
                 piece = pce;
                 break;
             }
         }
-
-        return mvv_lva[piece][GET_MOVE_CAPTURE(move)];
+        
+        return mvv_lva[GET_MOVE_PIECE(move)][piece];
     }
     return 0;
 }
