@@ -6,7 +6,6 @@
 #define eval
 #include "moveGenerator.h"
 #include "bit.h"
-#include "globals.h"
 extern int materialScores[12];
 extern const int pawn_pcsq[64];
 extern const int knight_pcsq[64];
