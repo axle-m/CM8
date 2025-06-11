@@ -7,18 +7,18 @@
 #include "driver.h"
 #include "boardState.h"
 
-int search_depth = 3;
+int search_depth = 6;
 
 static inline void recalibrate(){
     int bits = count_1s(occupancies[both]);
     if(bits < 25){
-        search_depth = 5;
+        search_depth = 7;
     }
     else if(bits < 20){
-        search_depth = 6;
+        search_depth = 8;
     }
     else if(bits < 12){
-        search_depth = 8;
+        search_depth = 9;
     }
     else if(bits < 8){
         search_depth = 10;
@@ -100,17 +100,26 @@ int main(int argc, char *argv[]) {
     printf("cm8 engine\n");
     init();
 
-    // parseFen(cmk_position);
-    // printBoard();
-    // uint64 start = unix_time_ms();
-    // getBestMove(search_depth);
-    // uint64 end = unix_time_ms();
-    // uint64 elapsed_time = (end - start);
-    // printf("%llums; ", elapsed_time);
-    // printf("evaluated %d nodes\n", nodes);
+    parseFen(killer_position);
+    printBoard();
+    uint64 start = unix_time_ms();
+    getBestMove(search_depth);
+    uint64 end = unix_time_ms();
+    uint64 elapsed_time = (end - start);
+    printf("%llums; ", elapsed_time);
+    printf("evaluated %d nodes\n", nodes);
 
-    printf("Running tests...\n");
-    runTests();
+    // moveList moves[1];
+    // initMoveList(moves);
+    // generateMoves(moves);
+    // printf("Generated %d moves:\n", moves->count);
+    // for(int i = 0; i < moves->count; i++) {
+    //     printf("%c%s%s", asciiPieces[(((moves->moves[i]) & 0xf000) >> 12)], squareToCoords[((moves->moves[i]) & 0x3f)], squareToCoords[(((moves->moves[i]) & 0xfc0) >> 6)]); (((moves->moves[i]) & 0xf0000) >> 16) ? printf("=%c", promotedPieces[(((moves->moves[i]) & 0xf0000) >> 16)]) : printf("");
+    //     printf(" score %d\n", scoreMove(moves->moves[i]));
+    // }
+
+    // printf("Running tests...\n");
+    // runTests();
 
     cleanup();
     return 0;

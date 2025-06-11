@@ -19,6 +19,12 @@ const int mvv_lva[12][12];
 
 int ply;
 
+// [id][ply]
+int killerMoves[2][64];
+
+// [piece][pos]
+int historyMoves[12][64]; // history table for each piece type and square
+
 static inline int evaluate() {
     int score = 0;
     uint64 bb;
@@ -74,7 +80,6 @@ static inline int scoreMove(int move){
         if(side == white) { start = p; end = k; }
         else { start = P; end = K; }
 
-        //TODO: optimize this
         for(int pce = start; pce <= end; pce++) {
             if(GET_BIT(bitboards[pce], GET_MOVE_TARGET(move))) {
                 piece = pce;
@@ -82,7 +87,11 @@ static inline int scoreMove(int move){
             }
         }
 
-        return mvv_lva[GET_MOVE_PIECE(move)][piece];
+        return mvv_lva[GET_MOVE_PIECE(move)][piece] + 10000;
+    } else {
+        if(killerMoves[0][ply] == move) return 9000;
+        if(killerMoves[1][ply] == move) return 8000;
+        else return historyMoves[GET_MOVE_PIECE(move)][GET_MOVE_TARGET(move)];
     }
     return 0;
 }
@@ -126,11 +135,19 @@ static inline void mergeSortMoves(int *moves, int left, int right) {
     }
 }
 
-// Usage: call this function to sort a moveList in descending order by scoreMove
+static inline int compareMoves(const void *a, const void *b) {
+    int scoreA = scoreMove(*(const int *)a);
+    int scoreB = scoreMove(*(const int *)b);
+    return (scoreB - scoreA); // descending order
+}
+
 static inline void sort(moveList *list) {
     if (list->count > 1)
-        mergeSortMoves(list->moves, 0, list->count - 1);
+        qsort(list->moves, list->count, sizeof(int), compareMoves);
+    // if (list->count > 1)
+    //     mergeSortMoves(list->moves, 0, list->count - 1);
 }
+
 static inline int quiescence(int alpha, int beta) {
     nodes++;
     int standPat = evaluate();
@@ -183,8 +200,12 @@ static inline int negamax(int alpha, int beta, int depth){
         //return evaluate(); // return evaluation at leaf nodes
         return quiescence(alpha, beta); // quiescence search at leaf nodes
     }
+    if(depth > 20) {
+        return (alpha > beta) ? alpha : beta; // fail-soft
+    }
 
     int isKingInCheck = isSquareAttacked((side == white ? getLSBIndex(bitboards[k]) : getLSBIndex(bitboards[K])), side ^ 1);
+    //if(isKingInCheck & 1) depth++; // increase depth if king is in check
 
     legalMovesCount = 0;
 
@@ -217,10 +238,15 @@ static inline int negamax(int alpha, int beta, int depth){
         legalMovesCount++;
 
         if(score >= beta) {
+            killerMoves[1][ply] = killerMoves[0][ply]; // store the killer move
+            killerMoves[0][ply] = move; // update the second killer move
+
             return beta; // fail high
         }
         
         if(score > alpha) {
+            historyMoves[GET_MOVE_PIECE(move)][GET_MOVE_TARGET(move)] += depth; // update history table
+
             alpha = score;
             if(ply == 0) {
                 bestSoFar = move; // store the best move at root level
