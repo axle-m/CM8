@@ -9,10 +9,17 @@
 #include "randomizingRoutines.h"
 #include "inputProcessor.h"
 #include "moveGenerator.h"
+#include "eval.h"
 
-int getBestMove();
-void init();
-void cleanup();
-uint64 unix_time_ms();
+extern int search_depth;
 
+extern void recalibrate();
+
+extern int playBestMove();
+extern int playBestFromFen(char *fen);
+
+extern uint64 unix_time_ms();
+extern void oneVsOne();
+extern void init();
+extern void cleanup();
 #endif

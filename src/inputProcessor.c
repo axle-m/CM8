@@ -3,8 +3,84 @@
 #include <string.h>
 
 #include "bit.h"
+#include "inputProcessor.h"
+#include "moveGenerator.h"
 
-int squareToPos(char *square) {\
+int makePlayerMove(char *move, int promotion) {
+    if(strlen(move) < 5) return 0;
+
+    char charPiece = move[0];
+    int from = squareToPos(&move[1]);
+    int to = squareToPos(&move[3]);
+
+    int piece = 0;
+    switch(charPiece) {
+        case 'P': piece = P; break;
+        case 'N': piece = N; break;
+        case 'B': piece = B; break;
+        case 'R': piece = R; break;
+        case 'Q': piece = Q; break;
+        case 'K': piece = K; break;
+        case 'p': piece = p; break;
+        case 'n': piece = n; break;
+        case 'b': piece = b; break;
+        case 'r': piece = r; break;
+        case 'q': piece = q; break;
+        case 'k': piece = k; break;
+        default: return 0;
+    }
+
+    if(!GET_BIT(bitboards[piece], from)) {
+        printf("Invalid move: piece not on square %s\n", squareToCoords[from]);
+        return 0;
+    }
+
+    int promotedPiece = 0;
+    if(promotion) {
+        switch(move[5]) {
+            case 'Q': promotedPiece = Q; break;
+            case 'R': promotedPiece = R; break;
+            case 'B': promotedPiece = B; break;
+            case 'N': promotedPiece = N; break;
+            default: return 0;
+        }
+    }
+
+    int capture = 0;
+    if(GET_BIT(occupancies[!side], to)) capture = 1;
+
+    int doublePush = 0;
+    if(piece == P && from - to == 16) doublePush = 1;
+    if(piece == p && to - from == 16) doublePush = 1;
+
+    int enPassant = 0;
+    if((piece == P || piece == p) && to == enpassant) enPassant = 1;
+
+    int isMoveCastle = 0;
+    if(piece == K && (from == e1 && to == g1 || from == e1 && to == c1)) isMoveCastle = 1;
+    if(piece == k && (from == e8 && to == g8 || from == e8 && to == c8)) isMoveCastle = 1;
+
+    
+    int encoded = ENCODE_MOVE(from, to, piece, promotedPiece, capture, doublePush, enPassant, isMoveCastle);
+
+    COPY_BOARD;
+
+    moveList *list = malloc(sizeof(moveList));
+    initMoveList(list);
+    generateMoves(list);
+    for(int i = 0; i < list->count; i++) {
+        if(list->moves[i] == encoded) {
+            makeMove(list->moves[i], capture);
+            return 1;
+        }
+
+    }
+    free(list);
+    TAKE_BACK;
+    return 0;
+}
+
+int squareToPos(char *square) {
     int file = square[0] - 'a';
     int rank = 8 - (square[1] - '0');
     return rank * 8 + file;

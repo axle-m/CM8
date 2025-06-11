@@ -1,11 +1,12 @@
 #include "bit.h"
 #include "attackTables.h"
 #include "inputProcessor.h"
+#include <string.h>
 
 #ifndef MOVE_MACROS
 #define MOVE_MACROS
-#define ENCODE_MOVE(from, to, piece, promoted, capture, doublePush, enPassant, castle) \
-    (from) | (to << 6) | (piece << 12) | (promoted << 16) | (capture << 20) | (doublePush << 21) | (enPassant << 22) | (castle << 23)
+#define ENCODE_MOVE(from, to, piece, promoted, isCapture, doublePush, enPassant, castle) \
+    (from) | (to << 6) | (piece << 12) | (promoted << 16) | (isCapture << 20) | (doublePush << 21) | (enPassant << 22) | (castle << 23)
 #define GET_MOVE_SOURCE(move) ((move) & 0x3f)
 #define GET_MOVE_TARGET(move) (((move) & 0xfc0) >> 6)
 #define GET_MOVE_PIECE(move) (((move) & 0xf000) >> 12)
@@ -50,12 +51,15 @@
     castle = castle_cpy;
 #endif
 
+#ifndef generator
+#define generator
+
 //move flags
 enum { all, capture };
 
-const int castleUpdate[64]; // updates castling rights based on the move made
+extern const int castleUpdate[64]; // updates castling rights based on the move made
 
-char promotedPieces[11];
+extern char promotedPieces[11];
 
 typedef struct moveList {
     int moves[256];
@@ -101,7 +105,7 @@ static inline int isSquareAttacked(int sq, int side){
 void printAttackedSquares(int side); // prints all the squares attacked by the given side
 
 static inline void generateMoves(moveList *list) { // generates all pseudo-legal moves for the current position
-    initMoveList(list);
+    list->count = 0; // reset move list
 
     int from, to;
     uint64 bb, attacks;
@@ -356,7 +360,7 @@ static inline void generateMoves(moveList *list) { // generates all pseudo-legal
                 CLEAR_BIT(bb, from);
             }
         }
-    }
+    } 
 }
 
 static inline int makeMove(int move, int flag){
@@ -463,3 +467,5 @@ static inline int countMoves(char* fen) {
     generateMoves(&list);
     return list.count;
 }
+
+#endif

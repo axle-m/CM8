@@ -7,28 +7,77 @@
 #include "driver.h"
 #include "boardState.h"
 
+static inline void runTests() {
+    double averages[7];
+    for(int i = 1; i < 8; i++) {
+        int temp_depth = i;
+        uint64 total = 0;
+        printf("running test at depth %d\n", temp_depth);
+
+        parseFen(start_position);
+        printf("Testing position: %s\n", start_position);
+        printBoard();
+        uint64 start_time = unix_time_ms();
+        int move = getBestMove(temp_depth);
+        uint64 end_time = unix_time_ms();
+        uint64 elapsed_time = end_time - start_time;
+        total += elapsed_time;
+        printf("Elapsed time for depth %d: %llu ms\n", temp_depth, elapsed_time);
+        printf("Best move: ");
+        PRINT_MOVE(move);
+        printf("\n");
+
+        parseFen(tricky_position);
+        printf("Testing position: %s\n", tricky_position);
+        printBoard();
+        start_time = unix_time_ms();
+        move = getBestMove(temp_depth);
+        end_time = unix_time_ms();
+        elapsed_time = end_time - start_time;
+        total += elapsed_time;
+        printf("Elapsed time for depth %d: %llu ms\n", temp_depth, elapsed_time);
+        printf("Best move: ");
+        PRINT_MOVE(move);
+        printf("\n");
+
+        parseFen(killer_position);
+        printf("Testing position: %s\n", killer_position);
+        printBoard();
+        start_time = unix_time_ms();
+        move = getBestMove(temp_depth);
+        end_time = unix_time_ms();
+        elapsed_time = end_time - start_time;
+        total += elapsed_time;
+        printf("Elapsed time for depth %d: %llu ms\n", temp_depth, elapsed_time);
+        printf("Best move: ");
+        PRINT_MOVE(move);
+        printf("\n");
+
+        // parseFen(cmk_position);
+        // printf("Testing position: %s\n", cmk_position);
+        // printBoard();
+        // start_time = unix_time_ms();
+        // move = getBestMove(temp_depth);
+        // end_time = unix_time_ms();
+        // elapsed_time = end_time - start_time;
+        // total += elapsed_time;
+        // printf("Elapsed time for depth %d: %llu ms\n", temp_depth, elapsed_time);
+        // printf("Best move: ");
+        // PRINT_MOVE(move);
+        // printf("\n");
+
+        averages[i - 1] = (double)(total) / 3.0;
+        printf("Average time for depth %d: %.2f ms\n", temp_depth, averages[i - 1]);
+    }
+
+    for(int i = 0; i < 7; i++) {
+        printf("Average time for depth %d: %.2f ms\n", i + 1, averages[i]);
+    }
+}
+
 int main(int argc, char *argv[]) {
     printf("cm8 engine\n");
     init();
-
-    parseFen("r3k2r/p1ppQpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R b KQkq - 0 1");
-    printBoard();
-
-    moveList list[1];
-    initMoveList(list);
-    generateMoves(list);
-
-    for(int i = 0; i < list->count; i++) {
-        int move = list->moves[i];
-        PRINT_MOVE_COMPLETE(move);
-        COPY_BOARD;
-        if(!makeMove(move, all)) continue;
-        printBoard();
-        getchar();
-        TAKE_BACK;
-        printBoard();
-        getchar();
-    }
 
     cleanup();
     return 0;
