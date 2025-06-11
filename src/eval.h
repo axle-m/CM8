@@ -68,7 +68,6 @@ int bestMove;
 uint64 nodes;
 
 static inline int scoreMove(int move){
-    printf("scoring move...\n");
     if(GET_MOVE_CAPTURE(move)) {
         int piece = P;
         int start, end;
@@ -77,14 +76,12 @@ static inline int scoreMove(int move){
 
         //TODO: optimize this
         for(int pce = start; pce <= end; pce++) {
-            printBitboard(bitboards[pce]);
             if(GET_BIT(bitboards[pce], GET_MOVE_TARGET(move))) {
-                printf("found piece %d at target square %d\n", pce, GET_MOVE_TARGET(move));
                 piece = pce;
                 break;
             }
         }
-        
+
         return mvv_lva[GET_MOVE_PIECE(move)][piece];
     }
     return 0;
@@ -147,7 +144,7 @@ static inline int quiescence(int alpha, int beta) {
     // Generate all possible captures
     moveList captures[1];
     generateMoves(captures);
-    //sort(captures);
+    sort(captures);
 
     for(int i = 0; i < captures->count; i++) {
         COPY_BOARD;
@@ -196,7 +193,7 @@ static inline int negamax(int alpha, int beta, int depth){
 
     moveList moves[1];
     generateMoves(moves);
-    //sort(moves);
+    sort(moves);
     
     for(int i = 0; i < moves->count; i++) {
         COPY_BOARD;

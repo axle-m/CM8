@@ -7,7 +7,7 @@
 #include "driver.h"
 #include "boardState.h"
 
-int search_depth = 4;
+int search_depth = 3;
 
 static inline void recalibrate(){
     int bits = count_1s(occupancies[both]);
@@ -29,8 +29,8 @@ static inline void recalibrate(){
 }
 
 static inline void runTests() {
-    double averages[10];
-    for(int i = 0; i < 10; i++) {
+    double averages[7];
+    for(int i = 1; i < 8; i++) {
         int temp_depth = i;
         uint64 total = 0;
         printf("running test at depth %d\n", temp_depth);
@@ -74,21 +74,25 @@ static inline void runTests() {
         PRINT_MOVE(move);
         printf("\n");
 
-        parseFen(cmk_position);
-        printf("Testing position: %s\n", cmk_position);
-        printBoard();
-        start_time = unix_time_ms();
-        move = getBestMove(temp_depth);
-        end_time = unix_time_ms();
-        elapsed_time = end_time - start_time;
-        total += elapsed_time;
-        printf("Elapsed time for depth %d: %llu ms\n", temp_depth, elapsed_time);
-        printf("Best move: ");
-        PRINT_MOVE(move);
-        printf("\n");
+        // parseFen(cmk_position);
+        // printf("Testing position: %s\n", cmk_position);
+        // printBoard();
+        // start_time = unix_time_ms();
+        // move = getBestMove(temp_depth);
+        // end_time = unix_time_ms();
+        // elapsed_time = end_time - start_time;
+        // total += elapsed_time;
+        // printf("Elapsed time for depth %d: %llu ms\n", temp_depth, elapsed_time);
+        // printf("Best move: ");
+        // PRINT_MOVE(move);
+        // printf("\n");
 
-        averages[i] = (double)(total) / 4.0;
-        printf("Average time for depth %d: %.2f ms\n", temp_depth, averages[i]);
+        averages[i - 1] = (double)(total) / 3.0;
+        printf("Average time for depth %d: %.2f ms\n", temp_depth, averages[i - 1]);
+    }
+
+    for(int i = 0; i < 7; i++) {
+        printf("Average time for depth %d: %.2f ms\n", i + 1, averages[i]);
     }
 }
 
@@ -96,24 +100,17 @@ int main(int argc, char *argv[]) {
     printf("cm8 engine\n");
     init();
 
-    parseFen(cmk_position);
-    printf("Testing position: %s\n", cmk_position);
-    printBoard();
+    // parseFen(cmk_position);
+    // printBoard();
+    // uint64 start = unix_time_ms();
+    // getBestMove(search_depth);
+    // uint64 end = unix_time_ms();
+    // uint64 elapsed_time = (end - start);
+    // printf("%llums; ", elapsed_time);
+    // printf("evaluated %d nodes\n", nodes);
 
-    moveList moves[1];
-    initMoveList(moves);
-    generateMoves(moves);
-    printf("Generated %d moves:\n", moves->count);
-    for(int i = 0; i < moves->count; i++) {
-        if(!GET_MOVE_CAPTURE(moves->moves[i])) {
-            continue; // skip non-capture and non-promotion moves
-        }
-        PRINT_MOVE(moves->moves[i]);
-        printf(" MVV-LVA: %d\n", scoreMove(moves->moves[i]));
-    }
-
-    // printf("Running tests...\n");
-    // runTests();
+    printf("Running tests...\n");
+    runTests();
 
     cleanup();
     return 0;
