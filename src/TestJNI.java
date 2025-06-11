@@ -22,4 +22,6 @@ public class TestJNI {
         System.out.println("makeMove result: " + resultz);
     }
 }
+
 //if u need immediate results, use this command: java "-Djava.library.path=." TestJNI
+//also ur prob gonna forget that ur not in src folder
