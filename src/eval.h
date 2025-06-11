@@ -271,9 +271,14 @@ static inline int negamax(int alpha, int beta, int depth){
 }
 
 static inline int getBestMove(int depth) {
-    int score = negamax(-50000, 50000, depth);
-    printf("Best: ");
-    PRINT_MOVE(bestMove);
+    negamax(-50000, 50000, depth);
+
+    //return -1 for checkmate, otherwise 0 indicates a draw or stalemate
+    if(bestMove == 0) {
+        int isKingInCheck = isSquareAttacked((side == white ? getLSBIndex(bitboards[k]) : getLSBIndex(bitboards[K])), side ^ 1);
+        if(isKingInCheck) bestMove -= 1;
+    }
+
     return bestMove;
 }
 

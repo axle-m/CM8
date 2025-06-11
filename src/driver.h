@@ -11,8 +11,15 @@
 #include "moveGenerator.h"
 #include "eval.h"
 
+int search_depth;
+
+void recalibrate();
+
+int playBestMove();
+int playBestFromFen(char *fen);
+
+uint64 unix_time_ms();
 void oneVsOne();
 void init();
 void cleanup();
-uint64 unix_time_ms();
 #endif

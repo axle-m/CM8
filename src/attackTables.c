@@ -171,7 +171,7 @@ uint64 setOccupancy(int index, int bitsInMask, uint64 attackMask) {
 }
 
 void initSliderAttacks() {
-    printf("Initializing slider attacks...\n");
+    // printf("Initializing slider attacks...\n");
     for (int square = 0; square < 64; square++) {
         //Bishop
         mBishopTbl[square].mask = bmask(square);
@@ -199,11 +199,11 @@ void initSliderAttacks() {
             mRookAttacks[square][mIndex] = ratt(square, occupancy);
         }
     }
-    printf("Slider attacks initialized.\n");
+    // printf("Slider attacks initialized.\n");
 }
 
 void initAttackTables() {
-    printf("Initializing attack tables...\n");
+    // printf("Initializing attack tables...\n");
     for (int i = 0; i < 64; i++)
     {
         pawnAttacks[white][i] = pmask(white, i);
@@ -212,5 +212,5 @@ void initAttackTables() {
         kingAttacks[i] = kmask(i);
     }
     initSliderAttacks();
-    printf("Attack tables initialized.\n");
+    // printf("Attack tables initialized.\n");
 }

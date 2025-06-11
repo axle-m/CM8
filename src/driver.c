@@ -4,6 +4,47 @@
 
 #include "driver.h"
 
+int search_depth = 6;
+
+void recalibrate(){
+    int bits = count_1s(occupancies[both]);
+    if(bits < 25){
+        search_depth = 7;
+    }
+    else if(bits < 20){
+        search_depth = 8;
+    }
+    else if(bits < 12){
+        search_depth = 9;
+    }
+    else if(bits < 8){
+        search_depth = 10;
+    }
+    else if(bits < 5){
+        search_depth = 12;
+    }
+}
+
+int playBestMove() {
+    recalibrate();
+    int bestMove = getBestMove(search_depth);
+    if(bestMove == 1) {
+        // printf("Best move: ");
+        // PRINT_MOVE(bestMove);
+        makeMove(bestMove, all);
+        // printBoard();
+    } else {
+        if(bestMove < 0) printf("Checkmate\n");
+        else if(bestMove == 0) printf("Draw\n");
+    }
+    return bestMove;
+}
+
+int playBestFromFen(char* fen) {
+    parseFen(fen);
+    return playBestMove();
+}
+
 void oneVsOne(){ 
     // parseFen(start_position);
     // char player = 'W';
