@@ -15,6 +15,10 @@ public class TestJNI {
         int moveResult = jni.makePlayerMove("Pe2e4", 0);
         System.out.println("Player move result: " + moveResult);
 
-        
+        int exampleMove = 2099378;  
+        int flag = 0;               
+
+        int resultz = jni.makeMove(exampleMove, flag);
+        System.out.println("makeMove result: " + resultz);
     }
 }

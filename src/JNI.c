@@ -36,5 +36,8 @@ JNIEXPORT jint JNICALL Java_JNI_playBestFromFen(JNIEnv* env, jobject obj, jstrin
     (*env)->ReleaseStringUTFChars(env, jfen, fen);
     return result;
 }
+JNIEXPORT jint JNICALL Java_JNI_makeMove(JNIEnv *env, jobject thisObj, jint move, jint flag) {
+    return makeMove(move, flag);
+}
 
 
