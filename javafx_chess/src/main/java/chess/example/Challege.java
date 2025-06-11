@@ -7,7 +7,6 @@ import javafx.stage.Stage;
 import javafx.scene.image.Image;
 
 import java.io.FileInputStream;
-import java.util.Dictionary;
 import java.util.HashMap;
 
 public class Challege extends Application {
@@ -19,7 +18,6 @@ public class Challege extends Application {
     public void start(Stage primaryStage) throws Exception {
         GridPane grid = new GridPane();
 
-        board[6][4] = "wp"; // white pawn
         board[0][0] = "br";
         board[0][1] = "bn";
         board[0][2] = "bb";
@@ -86,6 +84,7 @@ public class Challege extends Application {
                 updateSquare(row, col, movingPiece);
                 updateSquare(selectedRow, selectedCol, null);
                 System.out.println("Moved " + movingPiece + " from " + squares[selectedRow][selectedCol].getPosition() + " to " + squares[row][col].getPosition());
+                System.out.println(createFen());
             }
             // Reset selection
             squares[selectedRow][selectedCol].setStyle("-fx-background-color: " + ((selectedRow + selectedCol) % 2 == 0 ? "#f0d9b5" : "#b58863") + ";");
@@ -106,10 +105,8 @@ public class Challege extends Application {
         squares[row][col].setPiece(piece, img);
     }
 
-    public static String createFen(){
-        String fen = "";
-        int space = 0;
-
+    public static String createFen() {
+        StringBuilder fen = new StringBuilder();
         HashMap<String, String> imageToFen = new HashMap<>();
         imageToFen.put("bb", "b");
         imageToFen.put("bk", "k");
@@ -123,23 +120,29 @@ public class Challege extends Application {
         imageToFen.put("wp", "P");
         imageToFen.put("wq", "Q");
         imageToFen.put("wr", "R");
-        for(int i = 0; i < board.length; i++){
-            for(int j = 0; j < board[i].length; j++){
-                if(board[i][j] != null){
-                    fen += imageToFen.get(board[i][j]);
-                }
-                else{
-                    while(j < board[j].length && board[i][j] != null){
-                        space++;
-                        j++;
+
+        for (int i = 0; i < board.length; i++) {
+            int space = 0;
+            for (int j = 0; j < board[i].length; j++) {
+                if (board[i][j] == null) {
+                    space++;
+                } 
+                else {
+                    if (space > 0) {
+                        fen.append(space);
+                        space = 0;
                     }
-                    fen += String.valueOf(fen);
-                    fen += imageToFen.get(board[i][j]);
-                    space = 0;
+                    fen.append(imageToFen.get(board[i][j]));
                 }
             }
+            if (space > 0) {
+                fen.append(space);
+            }
+            if (i < board.length - 1) {
+                fen.append('/');
+            }
         }
-        return fen;
+        return fen.toString();
     }
 
     public static void main(String[] args) {
