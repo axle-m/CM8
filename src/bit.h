@@ -43,7 +43,6 @@ uint64 occupancies[3];                       // 0 - white, 1 - black, 2 - both
 int side;
 int enpassant;
 int castle;
-int ply;                                    // halfmove clock
 int legalMovesCount;                        
 const char *squareToCoords[64];             // maps 0-63 to a1-h8
 char asciiPieces[12];                       // maps piece enums to ascii chars

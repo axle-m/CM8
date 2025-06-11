@@ -77,7 +77,6 @@ uint64 occupancies[3] = {
 int side = white;
 int enpassant = no_sq;
 int castle = WK + WQ + BK + BQ;
-int ply = 0; //halfmove clock
 int legalMovesCount;
 
 const char *squareToCoords[] = {

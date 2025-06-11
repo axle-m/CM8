@@ -5,8 +5,8 @@
 
 #ifndef MOVE_MACROS
 #define MOVE_MACROS
-#define ENCODE_MOVE(from, to, piece, promoted, capture, doublePush, enPassant, castle) \
-    (from) | (to << 6) | (piece << 12) | (promoted << 16) | (capture << 20) | (doublePush << 21) | (enPassant << 22) | (castle << 23)
+#define ENCODE_MOVE(from, to, piece, promoted, isCapture, doublePush, enPassant, castle) \
+    (from) | (to << 6) | (piece << 12) | (promoted << 16) | (isCapture << 20) | (doublePush << 21) | (enPassant << 22) | (castle << 23)
 #define GET_MOVE_SOURCE(move) ((move) & 0x3f)
 #define GET_MOVE_TARGET(move) (((move) & 0xfc0) >> 6)
 #define GET_MOVE_PIECE(move) (((move) & 0xf000) >> 12)
@@ -51,6 +51,9 @@
     castle = castle_cpy;
 #endif
 
+#ifndef generator
+#define generator
+
 //move flags
 enum { all, capture };
 
@@ -70,35 +73,6 @@ static inline void initMoveList(moveList *list) {
 static inline void addMove(moveList *list, int move) {
     list->moves[list->count] = move;
     list->count++;
-}
-
-static inline int compareCaps(const void *a, const void *b) {
-    int pieceA = GET_MOVE_PIECE(*(int *)a);
-    int pieceB = GET_MOVE_PIECE(*(int *)b);
-    return pieceA - pieceB; // Sort in ascending order
-}
-
-static inline int compareNonCaps(const void *a, const void *b) {
-    int pieceA = GET_MOVE_PIECE(*(int *)a);
-    int pieceB = GET_MOVE_PIECE(*(int *)b);
-    return pieceB - pieceA; // Sort in descending order
-}
-
-static inline void sortMoveList(moveList *list) {
-    int captures[256], nonCaptures[256];
-    int capCount = 0, nonCapCount = 0;
-    for(int i = 0; i < list->count; i++) {
-        if(GET_MOVE_CAPTURE(list->moves[i]))
-            captures[capCount++] = list->moves[i];
-        else
-            nonCaptures[nonCapCount++] = list->moves[i];
-    }
-    qsort(captures, capCount, sizeof(int), compareCaps);
-    qsort(nonCaptures, nonCapCount, sizeof(int), compareNonCaps);
-    memcpy(list->moves, captures, capCount * sizeof(int));
-    memcpy(list->moves + capCount, nonCaptures, nonCapCount * sizeof(int));
-    list->count = capCount + nonCapCount;
-    // Sort captures by piece value (higher value first)
 }
 
 static inline void printMoveList(moveList *list) {
@@ -386,10 +360,7 @@ static inline void generateMoves(moveList *list) { // generates all pseudo-legal
                 CLEAR_BIT(bb, from);
             }
         }
-    }
-
-    //order list
-    sortMoveList(list);   
+    } 
 }
 
 static inline int makeMove(int move, int flag){
@@ -496,3 +467,5 @@ static inline int countMoves(char* fen) {
     generateMoves(&list);
     return list.count;
 }
+
+#endif
