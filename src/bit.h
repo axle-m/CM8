@@ -48,6 +48,8 @@ extern const char *squareToCoords[64];             // maps 0-63 to a1-h8
 extern char asciiPieces[12];                       // maps piece enums to ascii chars
 extern int char_pieces[12];                        // maps ascii chars to piece enums
 
+
+
 #endif
 
 extern void printBitboard(uint64 bitboard);        // prints the bitboard in a readable 2D format

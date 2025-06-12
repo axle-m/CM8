@@ -1,3 +1,4 @@
+
 public class JNI {
     public native int makePlayerMove(String move, int promotion, String fen);
     public native int getBestMove(int depth);

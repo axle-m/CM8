@@ -7,7 +7,7 @@
 #include "driver.h"
 #include "boardState.h"
 
-static inline void runTests() {
+static inline void runTests() {//THIS ONE
     double averages[7];
     for(int i = 1; i < 8; i++) {
         int temp_depth = i;

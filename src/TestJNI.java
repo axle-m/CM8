@@ -4,17 +4,25 @@ public class TestJNI {
 
         int result = jni.getBestMove(5);
         System.out.println("Best move returned: " + result);
+        
 
         int result1 = jni.playBestMove();
         System.out.println("Best move result: " + result1);
 
-        String fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"; // example FEN
+        
+        String fen = "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 1"; // example FEN
         int result2 = jni.playBestFromFen(fen);
+
         System.out.println("Best move from FEN result: " + result2);
+        String readable = MoveDecoder.decodeMove(result2);
+        System.out.println("Engine chose: " + readable);
+        String newFen = FenUpdater.applyMoveToFen(fen, readable);
+        System.out.println(newFen);
+
 
         int moveResult = jni.makePlayerMove("Pe2e4", 0,"rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
         System.out.println("Player move result: " + moveResult);
-
+        
         int exampleMove = 2099378;  
         int flag = 0;               
 

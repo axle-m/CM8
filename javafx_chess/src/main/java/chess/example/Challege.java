@@ -1,5 +1,8 @@
 package chess.example;
-
+//idk the layout of the java fx folders, like i need to know which methods need to be called with the JNI
+//u talk here
+// I need to make the methods
+//I couldn't before becasue i couldn't access the JNI
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.layout.GridPane;
@@ -17,7 +20,13 @@ public class Challege extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         GridPane grid = new GridPane();
+// so my java version of the JNI is gonna have all of the methods that u could kinda just call, like imma make a class like bridge.java then 
 
+//that should be able to call the JNi methods, like if we need to make a move, then we could call bridge.makeMove and then go from there
+//so real quick lets go to the JNI.java (the one in java fx)
+//What i need is 
+//1) The bots move
+//2) Send a fen to the bot of the fen after the player makes a move
         board[0][0] = "br";
         board[0][1] = "bn";
         board[0][2] = "bb";
