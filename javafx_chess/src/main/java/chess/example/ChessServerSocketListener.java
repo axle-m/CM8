@@ -1,4 +1,4 @@
-package sockets;
+package chess.example;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -19,10 +19,7 @@ public class ChessServerSocketListener  implements Runnable {
         broadcast(new MessageStoC_Chat(client.getUserName(), m.msg), null);
     }
 
-    private void processListMessage(MessageCtoS_List m){
-        System.out.println("List received from " + client.getUserName() + " - broadcasting");
-        broadcast(new MessageStoC_List(clientList, client.getUserName()), null);
-    }
+    
 
     /**
      * Broadcasts a message to all clients connected to the server.
@@ -77,9 +74,6 @@ public class ChessServerSocketListener  implements Runnable {
                 }
                 else if (msg instanceof MessageCtoS_Chat) {
                     processChatMessage((MessageCtoS_Chat) msg);
-                }
-                else if(msg instanceof MessageCtoS_List){
-                    processListMessage((MessageCtoS_List) msg);
                 }
                 else {
                     System.out.println("Unhandled message type: " + msg.getClass());

@@ -26,18 +26,17 @@ public class ChessGuiSocketListener implements Runnable {
     private void processWelcomeMessage(MessageStoC_Welcome m) {
         String user = m.userName;
 
-        if(this.username.equals(m.userName)){
+        if(this.username.equals(user)){
             Platform.runLater(() -> {
                 chatGuiClient.getStage().setTitle("Chatter - " + username);
                 chatGuiClient.getTextInput().setEditable(true);
                 chatGuiClient.getSendButton().setDisable(false);
                 chatGuiClient.getMessageArea().appendText("Welcome to the chat, " + username + "\n");
-                chatGuiClient.sendListMessage();
             });
         }
         else{
             Platform.runLater(() -> {
-                chatGuiClient.getMessageArea().appendText(m.userName + " joined the chat!\n");
+                chatGuiClient.getMessageArea().appendText(user + " joined the chat!\n");
             });
         }
     }
@@ -57,21 +56,10 @@ public class ChessGuiSocketListener implements Runnable {
         //
         Platform.runLater(() -> {
             chatGuiClient.getMessageArea().appendText(m.userName + " has left the chat!\n");
-            chatGuiClient.sendListMessage();
         });
     }
 
-    private void processListMessage(MessageStoC_List m){
-        Platform.runLater(() -> {
-            chatGuiClient.getNames().clear();
-            chatGuiClient.getNames().add("Bot");
-            for(int i = 0; i < m.userNames.size(); i++){
-                if(!m.userNames.get(i).equals(username)){
-                    chatGuiClient.getNames().add(m.userNames.get(i));
-                }
-            }
-        });
-    }
+ 
 
     public void run() {
         try {
@@ -95,9 +83,6 @@ public class ChessGuiSocketListener implements Runnable {
                 } 
                 else if (msg instanceof MessageStoC_Exit) {
                     processExitMessage((MessageStoC_Exit) msg);
-                } 
-                else if(msg instanceof MessageStoC_List){
-                    processListMessage((MessageStoC_List) msg);
                 }
                 else {
                     System.out.println("Unhandled message type: " + msg.getClass());
