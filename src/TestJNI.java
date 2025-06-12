@@ -12,7 +12,7 @@ public class TestJNI {
         int result2 = jni.playBestFromFen(fen);
         System.out.println("Best move from FEN result: " + result2);
 
-        int moveResult = jni.makePlayerMove("Pe2e4", 0);
+        int moveResult = jni.makePlayerMove("Pe2e4", 0,"rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
         System.out.println("Player move result: " + moveResult);
 
         int exampleMove = 2099378;  
@@ -22,3 +22,6 @@ public class TestJNI {
         System.out.println("makeMove result: " + resultz);
     }
 }
+
+//if u need immediate results, use this command: java "-Djava.library.path=." TestJNI
+//also ur prob gonna forget that ur not in src folder

@@ -6,21 +6,22 @@
 // JNI naming: Java_<Package>_<Class>_<MethodName>
 // If no package: Java_<ClassName>_<MethodName>
 
-JNIEXPORT jint JNICALL Java_JNI_makePlayerMove(JNIEnv *env, jobject obj, jstring move, jint promotion) {
-    
+JNIEXPORT jint JNICALL Java_JNI_makePlayerMove(JNIEnv *env, jobject obj, jstring move, jint promotion, jstring fen) {
     const char *c_move = (*env)->GetStringUTFChars(env, move, NULL);
-    
-    if (c_move == NULL) {
-        return -1;  
+    const char *c_fen = (*env)->GetStringUTFChars(env, fen, NULL);
+
+    if (c_move == NULL || c_fen == NULL) {
+        return -1;  // Out of memory or bad input
     }
 
-    int result = makePlayerMove((char *)c_move, (int)promotion);
+    int result = makePlayerMove((char *)c_move, (int)promotion, (char *)c_fen);
 
-    // Release the string
     (*env)->ReleaseStringUTFChars(env, move, c_move);
+    (*env)->ReleaseStringUTFChars(env, fen, c_fen);
 
     return result;
 }
+
 
 JNIEXPORT jint JNICALL Java_JNI_getBestMove(JNIEnv *env, jobject obj, jint depth) {
     return getBestMove(depth); 

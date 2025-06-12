@@ -6,7 +6,9 @@
 #include "inputProcessor.h"
 #include "moveGenerator.h"
 
-int makePlayerMove(char *move, int promotion, char* fen) {
+
+    int makePlayerMove(char *move, int promotion, char* fen) {
+
     parseFen(fen);
     if(strlen(move) < 5) return 0;
 
